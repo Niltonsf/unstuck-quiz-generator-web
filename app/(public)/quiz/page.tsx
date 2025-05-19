@@ -1,7 +1,7 @@
 import React from 'react'
 
 const QuizPage = () => {
-  return <div></div>
+  return <div>quiz page</div>
 }
 
 export default QuizPage

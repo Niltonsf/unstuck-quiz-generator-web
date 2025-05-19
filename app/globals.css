@@ -9,6 +9,7 @@
   --background: #F8F8F9;
   --foreground: oklch(0.13 0.028 261.692);
   --drag-border-active: #3B82F6;
+  --input-background: #F8F8F9;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.13 0.028 261.692);
   --popover: oklch(1 0 0);
@@ -52,6 +53,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-drag-border-active: var(--drag-border-active);
+  --color-input-background: var(--input-background);
   --color-sidebar: var(--sidebar);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
