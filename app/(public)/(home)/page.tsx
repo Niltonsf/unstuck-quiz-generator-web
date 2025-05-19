@@ -1,9 +1,38 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import Logo from '@/assets/svg/logo.svg'
 import Image from 'next/image'
 import { HomeDragAndDropCard } from '@/components/home/home-drag-and-drop-card'
+import LoadingOverlay from '@/components/layout/loading-overlay'
+import { toast } from 'sonner'
 
 const HomePage = () => {
+  const [uploading, setUploading] = useState(false)
+
+  const onSubmitFile = async (file: File) => {
+    try {
+      setUploading(true)
+
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+
+      console.log('page: ', file)
+    } catch (error) {
+      toast('Something went wrong, please try again')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  if (uploading) {
+    return (
+      <LoadingOverlay
+        title={'Generating Quiz Questions'}
+        subtitle={'Reading your materials...'}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-[700px] mx-5">
@@ -22,7 +51,7 @@ const HomePage = () => {
           </span>
         </div>
 
-        <HomeDragAndDropCard />
+        <HomeDragAndDropCard onSubmitFile={onSubmitFile} />
       </div>
     </div>
   )

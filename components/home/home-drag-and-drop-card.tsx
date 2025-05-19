@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useCallback } from 'react'
 import FolderWithPdfs from '@/assets/svg/home/folder-with-pdfs.svg'
 import Image from 'next/image'
@@ -8,14 +6,23 @@ import { useDropzone } from 'react-dropzone'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
-const HomeDragAndDropCard = () => {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) {
-      return
-    }
+interface HomeDragAndDropCardProps {
+  onSubmitFile: (file: File) => Promise<void>
+}
 
-    console.log('home-drag-and-drop-card: ', acceptedFiles)
-  }, [])
+const HomeDragAndDropCard = ({ onSubmitFile }: HomeDragAndDropCardProps) => {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0) {
+        return
+      }
+
+      const file = acceptedFiles[0]
+
+      onSubmitFile(file)
+    },
+    [onSubmitFile],
+  )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
