@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check } from 'lucide-react'
+import { QuestionBadge } from './question-correct-badge'
 
 interface QuestionReviewOptionProps {
   questionNumber: number
@@ -22,17 +22,7 @@ const QuestionReviewOption = ({
           className="flex flex-1 bg-transparent border-none outline-none px-5 h-full font-medium"
         />
 
-        {isCorrectAnswer && (
-          <div className="flex items-center bg-green-100 h-8 rounded-md mr-2.5 border border-green-300 gap-1.5 px-2.5">
-            <Check size={14} className="text-green-600" />
-
-            <span className="text-xs text-green-600 font-medium">
-              <span className="sm:inline hidden">Correct Answer</span>
-
-              <span className="sm:hidden inline">Correct</span>
-            </span>
-          </div>
-        )}
+        {isCorrectAnswer && <QuestionBadge />}
       </div>
     </div>
   )

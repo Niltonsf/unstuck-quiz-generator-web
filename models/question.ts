@@ -5,4 +5,3 @@ export type Question = {
   options: Option[]
   correctAnswer: string
 }
-

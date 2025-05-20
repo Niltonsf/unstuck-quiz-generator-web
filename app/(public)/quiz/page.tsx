@@ -1,10 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
-import PDF from '@/assets/svg/pdf.svg'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, Zap } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Question from '@/components/ui/question/question'
 import QuestionHeader from '@/components/ui/question/question-header'
@@ -14,8 +12,8 @@ import { useQuizStore } from '@/store/use-quiz-store'
 import { toast } from 'sonner'
 import { QuizCorrectAnswer } from '@/components/quiz/quiz-correct-answer'
 import { QuizIncorrectAnswer } from '@/components/quiz/quiz-incorrect-answer'
-import { Header } from '@/components/layout/header'
 import { QuizHeader } from '@/components/quiz/quiz-header'
+import { QuestionHeaderQuestion } from '@/components/ui/question/question-header-question'
 
 const mockQuestions = [
   {
@@ -115,10 +113,9 @@ const QuizPage = () => {
         <div className="max-w-3xl w-full flex flex-1 flex-col self-center">
           <div className="flex flex-1 w-full items-center justify-center my-3 flex-col gap-6">
             <Question>
-              <QuestionHeader
-                question={currentQuestion.question}
-                questionNumber={currentIndex + 1}
-              />
+              <QuestionHeader questionNumber={currentIndex + 1}>
+                <QuestionHeaderQuestion question={currentQuestion.question} />
+              </QuestionHeader>
 
               <Separator />
 
@@ -130,19 +127,18 @@ const QuizPage = () => {
               />
             </Question>
 
-            {(showFeedback || isAnswerAlreadyAnswered) && (
-              selectedAnswer === currentQuestion.correctAnswer ? (
+            {(showFeedback || isAnswerAlreadyAnswered) &&
+              (selectedAnswer === currentQuestion.correctAnswer ? (
                 <QuizCorrectAnswer />
               ) : (
                 <QuizIncorrectAnswer
                   correctAnswer={
                     currentQuestion.options.find(
-                      (opt) => opt.value === currentQuestion.correctAnswer
+                      (opt) => opt.value === currentQuestion.correctAnswer,
                     )?.label || 'Unknown'
                   }
                 />
-              )
-            )}
+              ))}
           </div>
 
           <div className="flex w-full items-center justify-between max-w-3xl">
@@ -156,7 +152,10 @@ const QuizPage = () => {
               Previous
             </Button>
 
-            <Button className="h-11 rounded-2xl w-24 self-end" onClick={handleNext}>
+            <Button
+              className="h-11 rounded-2xl w-24 self-end"
+              onClick={handleNext}
+            >
               {isLastQuestion ? 'Finish' : 'Next'}
               {!isLastQuestion && <ChevronRight />}
             </Button>

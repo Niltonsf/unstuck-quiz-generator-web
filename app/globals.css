@@ -5,6 +5,8 @@
 
 :root {
   --primary: #6D56FA;
+  --green-muted: #46CD94;
+  --red-muted: #FF6258;
   --radius: 0.625rem;
   --background: #F8F8F9;
   --foreground: oklch(0.13 0.028 261.692);
@@ -54,6 +56,8 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-drag-border-active: var(--drag-border-active);
   --color-input-background: var(--input-background);
+  --color-green-muted: var(--green-muted);
+  --color-red-muted: var(--red-muted);
   --color-sidebar: var(--sidebar);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);

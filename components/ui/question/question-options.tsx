@@ -15,7 +15,7 @@ const QuestionOptions = ({
   questions,
   onSelect,
   selected,
-  disabled
+  disabled,
 }: QuestionOptionsProps) => {
   return (
     <RadioGroup value={selected} onValueChange={onSelect}>
@@ -30,15 +30,19 @@ const QuestionOptions = ({
               'flex items-center space-x-2 bg-input-background h-[54px] rounded-lg px-5 cursor-pointer transition-colors duration-200 ease-in-out border-input-background border',
               isSelected && 'bg-primary/10 border-primary',
               !disabled && 'hover:bg-primary/10',
-              disabled && 'cursor-not-allowed'
+              disabled && 'cursor-not-allowed',
             )}
           >
-            <RadioGroupItem value={question.value} id={question.value} disabled={disabled} />
+            <RadioGroupItem
+              value={question.value}
+              id={question.value}
+              disabled={disabled}
+            />
             <Label
               htmlFor={question.value}
               className={cn(
                 !disabled && 'hover:bg-primary/10',
-                disabled && 'cursor-not-allowed'
+                disabled && 'cursor-not-allowed',
               )}
             >
               {question.label}

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
+// eslint-disable-next-line import/no-named-default
 import { default as CorrectAnswerSVG } from '@/assets/svg/correct-answer.svg'
 
 const QuizCorrectAnswer = () => {

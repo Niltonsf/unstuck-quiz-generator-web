@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
-const Question = ({ children }: { children: React.ReactNode }) => (
-  <Card className="w-full p-5 gap-7 shadow-none">{children}</Card>
+interface QuestionProps extends HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+}
+
+const Question = ({ children, className, ...rest }: QuestionProps) => (
+  <Card className={cn('w-full p-5 gap-7 shadow-none', className)} {...rest}>
+    {children}
+  </Card>
 )
 
 export default Question

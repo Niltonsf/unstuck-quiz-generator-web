@@ -1,19 +1,27 @@
 import React from 'react'
 import { CardHeader } from '@/components/ui/card'
+import { QuestionBadge } from './question-correct-badge'
 
 interface QuestionHeaderProps {
-  question: string
   questionNumber: number
+  isCorrect?: boolean
+  children?: React.ReactNode
 }
 
-const QuestionHeader = ({ question, questionNumber }: QuestionHeaderProps) => {
+const QuestionHeader = ({
+  questionNumber,
+  children,
+  isCorrect,
+}: QuestionHeaderProps) => {
   return (
     <CardHeader className="flex flex-col gap-3 p-0">
-      <p>Question {questionNumber}</p>
+      <div className="flex w-full items-center justify-between">
+        <p>Question {questionNumber}</p>
 
-      <div className="p-5 bg-neutral-100 rounded-md border border-gray-200/30 w-full">
-        <p className="font-medium text-zinc-700">{question}</p>
+        {isCorrect !== undefined && <QuestionBadge isCorrect={isCorrect} />}
       </div>
+
+      {children}
     </CardHeader>
   )
 }
