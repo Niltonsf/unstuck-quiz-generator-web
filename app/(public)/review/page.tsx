@@ -11,6 +11,7 @@ import QuestionReviewOption from '@/components/ui/question/question-review-optio
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import LoadingOverlay from '@/components/layout/loading-overlay'
+import { ReviewHeader } from '@/components/review/review-header'
 
 const questions = [
   'What innovative tool did Jake Harper develop to assist students with admissions into competitive academic majors at the University of Washington?',
@@ -46,14 +47,7 @@ const ReviewPage = () => {
   return (
     <div className="min-h-screen flex justify-center pt-11">
       <div className="max-w-7xl w-full flex items-start flex-col pb-32">
-        <Button
-          variant={'ghost'}
-          className="text-primary gap-1.5 hover:bg-transparent"
-          onClick={() => router.push('/')}
-        >
-          <ChevronLeft />
-          Back
-        </Button>
+        <ReviewHeader />
 
         <div className="flex self-center w-full max-w-3xl mt-5 h-full items-start flex-col gap-5 px-4 sm:px-6">
           <LogoTitle
