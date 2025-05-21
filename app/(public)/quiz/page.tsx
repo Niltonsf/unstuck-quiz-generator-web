@@ -15,6 +15,7 @@ import { QuizHeader } from '@/components/quiz/quiz-header'
 import { QuestionHeaderQuestion } from '@/components/ui/question/question-header-question'
 import { QuestionService } from '@/services/question-service'
 import { handleError } from '@/lib/error-handler'
+import ToastProgress from '@/components/ui/toast-progress'
 
 const QuizPage = () => {
   const router = useRouter()
@@ -40,7 +41,7 @@ const QuizPage = () => {
   )
   const selectedAnswer = selectedOptions[currentQuestion?.id]
   const isLastQuestion = currentIndex === questions.length - 1
-  const answer = answers[currentQuestion.id]
+  const answer = answers[currentQuestion?.id]
 
   const onGoBack = () => {
     resetQuiz()
@@ -72,6 +73,15 @@ const QuizPage = () => {
         selectedAnswer,
       )
 
+      toast.custom((toastId) => (
+        <ToastProgress
+          interval={1000}
+          seconds={3}
+          toastId={toastId}
+          title="Next question in"
+        />
+      ))
+
       answerQuestion(currentQuestion.id, selectedAnswer, validatedAnswerResult)
 
       setShowFeedback(true)
@@ -87,6 +97,7 @@ const QuizPage = () => {
         }
       }, 3000)
     } catch (error) {
+      console.log('page: ', error)
       handleError(error)
     }
   }
