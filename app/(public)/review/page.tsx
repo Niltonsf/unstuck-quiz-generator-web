@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import React, { useEffect, useState } from 'react'
 import LogoTitle from '@/components/ui/logo-title'
 import Question from '@/components/ui/question/question'
 import QuestionHeader from '@/components/ui/question/question-header'
@@ -16,9 +15,15 @@ import { handleError } from '@/lib/error-handler'
 import { Question as QuestionType } from '@/models/question'
 import { QuestionService } from '@/services/question-service'
 import { useMutation } from '@tanstack/react-query'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Info } from 'lucide-react'
+import { FooterFloatingActionButton } from '@/components/ui/footer-floating-action-button'
+import ReviewAddNameDialog from '@/components/review/review-add-name-dialog'
 
 const ReviewPage = () => {
   const router = useRouter()
+  const [isReviewAddNameDialogOpen, setIsReviewAddNameDialogOpen] =
+    useState(false)
 
   const {
     isEncrypted,
@@ -52,7 +57,11 @@ const ReviewPage = () => {
     },
   })
 
-  const onQuizStart = () => {
+  const handleOpenAddNameDialog = () => {
+    setIsReviewAddNameDialogOpen(true)
+  }
+
+  const onStartQuiz = () => {
     createQuizMutation.mutate(undefined)
   }
 
@@ -84,7 +93,7 @@ const ReviewPage = () => {
     ) {
       decryptMutation.mutate(undefined)
     }
-  }, [decryptMutation, isEncrypted])
+  }, [isEncrypted])
 
   if (createQuizMutation?.isPending || decryptMutation?.isPending) {
     return (
@@ -107,6 +116,18 @@ const ReviewPage = () => {
             wrapperClassName="mb-2.5 sm:self-start self-center"
             logoSize={31}
           />
+
+          <Alert>
+            <Info>Heads up!</Info>
+            <AlertDescription>
+              Double-click an option to select it as correct. Double-click it
+              again to unselect.
+              <br />
+              <strong>
+                Note: Each question must have at least one correct answer.
+              </strong>
+            </AlertDescription>
+          </Alert>
 
           {questions.map((question) => (
             <Question key={question.id}>
@@ -144,13 +165,16 @@ const ReviewPage = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white via-white/100 to-transparent pointer-events-none z-10" />
+      <FooterFloatingActionButton
+        label="Start Quiz"
+        onClick={handleOpenAddNameDialog}
+      />
 
-      <div className="fixed bottom-14 left-1/2 transform -translate-x-1/2 z-20">
-        <Button size="lg" className="px-8" onClick={onQuizStart}>
-          Start Quiz
-        </Button>
-      </div>
+      <ReviewAddNameDialog
+        open={isReviewAddNameDialogOpen}
+        setOpen={setIsReviewAddNameDialogOpen}
+        onStartQuiz={onStartQuiz}
+      />
     </div>
   )
 }
