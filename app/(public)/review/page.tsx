@@ -19,19 +19,15 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Info } from 'lucide-react'
 import { FooterFloatingActionButton } from '@/components/ui/footer-floating-action-button'
 import ReviewAddNameDialog from '@/components/review/review-add-name-dialog'
+import { delay } from '@/lib/time'
+import { isProbablyEncrypted } from '@/lib/string'
 
 const ReviewPage = () => {
   const router = useRouter()
   const [isReviewAddNameDialogOpen, setIsReviewAddNameDialogOpen] =
     useState(false)
 
-  const {
-    isEncrypted,
-    setIsEncrypted,
-    questions,
-    updateQuestion,
-    setQuestions,
-  } = useQuizStore()
+  const { questions, updateQuestion, setQuestions } = useQuizStore()
 
   const decryptMutation = useMutation({
     mutationFn: () => QuestionService.decryptQuiz(questions),
@@ -39,22 +35,18 @@ const ReviewPage = () => {
       setQuestions(data)
     },
     onError: handleError,
-    onSettled: () => {
-      setTimeout(() => setIsEncrypted(false), 300)
-    },
   })
 
   const createQuizMutation = useMutation({
     mutationFn: () => QuestionService.createQuiz(questions),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await delay(3000)
+
       setQuestions(data)
 
       router.push('/quiz')
     },
     onError: handleError,
-    onSettled: () => {
-      setTimeout(() => setIsEncrypted(true), 300)
-    },
   })
 
   const handleOpenAddNameDialog = () => {
@@ -86,14 +78,18 @@ const ReviewPage = () => {
   }
 
   useEffect(() => {
+    const hasEncryptedAnswer = questions.some((q) =>
+      q.answer.some((a) => isProbablyEncrypted(a)),
+    )
+
     if (
-      isEncrypted &&
+      hasEncryptedAnswer &&
       !decryptMutation.isPending &&
       !decryptMutation.isSuccess
     ) {
       decryptMutation.mutate(undefined)
     }
-  }, [isEncrypted])
+  }, [])
 
   if (createQuizMutation?.isPending || decryptMutation?.isPending) {
     return (

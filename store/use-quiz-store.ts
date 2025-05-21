@@ -8,8 +8,6 @@ type QuizState = {
   currentIndex: number
   title: string
   setTitle: (title: string) => void
-  isEncrypted: boolean
-  setIsEncrypted: (isEncrypted: boolean) => void
   answerQuestion: (
     questionId: string,
     answer: string,
@@ -33,7 +31,6 @@ export const useQuizStore = create<QuizState>()(
   persist(
     (set, get) => ({
       title: '',
-      isEncrypted: false,
       currentIndex: 0,
       questions: [],
       answers: {},
@@ -43,9 +40,6 @@ export const useQuizStore = create<QuizState>()(
       },
       setQuestions: (questions) => {
         set({ questions })
-      },
-      setIsEncrypted: (isEncrypted) => {
-        set({ isEncrypted })
       },
       answerQuestion: (questionId, answer, validatedAnswerResponse) => {
         const { selectedOptions, answers } = get()

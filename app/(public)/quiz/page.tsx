@@ -150,6 +150,7 @@ const QuizPage = () => {
               onClick={handleNext}
             >
               {isLastQuestion ? 'Finish' : 'Next'}
+
               {!isLastQuestion && <ChevronRight />}
             </Button>
           </div>
