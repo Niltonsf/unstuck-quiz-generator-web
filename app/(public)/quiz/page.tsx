@@ -26,9 +26,8 @@ const QuizPage = () => {
     next,
     answers,
     selectedOptions,
-    selectAnswer,
+    answerQuestion,
     previous,
-    setAnswer,
     resetQuiz,
   } = useQuizStore()
 
@@ -73,7 +72,7 @@ const QuizPage = () => {
         selectedAnswer,
       )
 
-      setAnswer(currentQuestion.id, selectedAnswer, validatedAnswerResult)
+      answerQuestion(currentQuestion.id, selectedAnswer, validatedAnswerResult)
 
       setShowFeedback(true)
       setCooldown(true)
@@ -113,7 +112,7 @@ const QuizPage = () => {
               <QuestionOptions
                 currentQuestion={currentQuestion}
                 selected={selectedOptions[currentQuestion.id]}
-                onSelect={(value) => selectAnswer(currentQuestion.id, value)}
+                onSelect={(value) => answerQuestion(currentQuestion.id, value)}
                 disabled={!!answer || showFeedback}
                 answer={answer}
               />
