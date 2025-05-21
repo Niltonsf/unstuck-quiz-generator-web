@@ -1,7 +1,9 @@
 import { Option } from './option'
 
 export type Question = {
+  id: string
   question: string
   options: Option[]
-  correctAnswer: string
+  questionNumber: number
+  answer: string[]
 }

@@ -1,31 +1,36 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { HomeDragAndDropCard } from '@/components/home/home-drag-and-drop-card'
 import LoadingOverlay from '@/components/layout/loading-overlay'
-import { toast } from 'sonner'
 import LogoTitle from '@/components/ui/logo-title'
 import { useRouter } from 'next/navigation'
+import { QuestionService } from '@/services/question-service'
+import { handleError } from '@/lib/error-handler'
+import { useQuizStore } from '@/store/use-quiz-store'
+import { useMutation } from '@tanstack/react-query'
 
 const HomePage = () => {
   const route = useRouter()
-  const [uploading, setUploading] = useState(false)
 
-  const onSubmitFile = async (file: File) => {
-    try {
-      setUploading(true)
+  const { setQuestions, setTitle, reset } = useQuizStore()
 
-      await new Promise((resolve) => setTimeout(resolve, 5000))
+  const submitFileMuttation = useMutation({
+    mutationFn: (file: File) => QuestionService.generateQuestions(file),
+    onSuccess: (data) => {
+      setQuestions(data.questions)
+      setTitle(data.title)
 
       route.push('/review')
-    } catch {
-      toast('Something went wrong, please try again')
-    } finally {
-      setUploading(false)
-    }
-  }
+    },
+    onError: (error) => handleError(error),
+  })
 
-  if (uploading) {
+  useEffect(() => {
+    reset()
+  }, [reset])
+
+  if (submitFileMuttation.isPending) {
     return (
       <LoadingOverlay
         title={'Generating Quiz Questions'}
@@ -46,7 +51,9 @@ const HomePage = () => {
           </span>
         </div>
 
-        <HomeDragAndDropCard onSubmitFile={onSubmitFile} />
+        <HomeDragAndDropCard
+          onSubmitFile={(file) => submitFileMuttation.mutate(file)}
+        />
       </div>
     </div>
   )

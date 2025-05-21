@@ -1,41 +1,92 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft } from 'lucide-react'
 import LogoTitle from '@/components/ui/logo-title'
 import Question from '@/components/ui/question/question'
 import QuestionHeader from '@/components/ui/question/question-header'
 import { Separator } from '@/components/ui/separator'
 import QuestionReviewOption from '@/components/ui/question/question-review-option'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 import LoadingOverlay from '@/components/layout/loading-overlay'
 import { ReviewHeader } from '@/components/review/review-header'
-
-const questions = [
-  'What innovative tool did Jake Harper develop to assist students with admissions into competitive academic majors at the University of Washington?',
-]
+import { useQuizStore } from '@/store/use-quiz-store'
+import { QuestionHeaderQuestion } from '@/components/ui/question/question-header-question'
+import { handleError } from '@/lib/error-handler'
+import { Question as QuestionType } from '@/models/question'
+import { QuestionService } from '@/services/question-service'
+import { useMutation } from '@tanstack/react-query'
 
 const ReviewPage = () => {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
 
-  const onQuizStart = async () => {
-    try {
-      setLoading(true)
+  const {
+    isEncrypted,
+    setIsEncrypted,
+    questions,
+    updateQuestion,
+    setQuestions,
+  } = useQuizStore()
 
-      await new Promise((resolve) => setTimeout(resolve, 5000))
+  const decryptMutation = useMutation({
+    mutationFn: () => QuestionService.decryptQuiz(questions),
+    onSuccess: (data) => {
+      setQuestions(data)
+    },
+    onError: handleError,
+    onSettled: () => {
+      setTimeout(() => setIsEncrypted(false), 300)
+    },
+  })
+
+  const createQuizMutation = useMutation({
+    mutationFn: () => QuestionService.createQuiz(questions),
+    onSuccess: (data) => {
+      setQuestions(data)
 
       router.push('/quiz')
-    } catch {
-      toast('Something went wrong, please try again')
-    } finally {
-      setTimeout(() => setLoading(false), 300)
-    }
+    },
+    onError: handleError,
+    onSettled: () => {
+      setTimeout(() => setIsEncrypted(true), 300)
+    },
+  })
+
+  const onQuizStart = () => {
+    createQuizMutation.mutate(undefined)
   }
 
-  if (loading) {
+  const onOptionTextChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    question: QuestionType,
+    optionIndex: number,
+  ) => {
+    const value = e.target.value
+
+    const updatedOptions = question.options.map((option, index) => {
+      if (index === optionIndex) {
+        return { ...option, label: value }
+      }
+
+      return option
+    })
+
+    updateQuestion(question.id, {
+      options: updatedOptions,
+    })
+  }
+
+  useEffect(() => {
+    if (
+      isEncrypted &&
+      !decryptMutation.isPending &&
+      !decryptMutation.isSuccess
+    ) {
+      decryptMutation.mutate(undefined)
+    }
+  }, [decryptMutation, isEncrypted])
+
+  if (createQuizMutation?.isPending || decryptMutation?.isPending) {
     return (
       <LoadingOverlay
         title={'Preparing Quiz for Practise'}
@@ -57,23 +108,36 @@ const ReviewPage = () => {
             logoSize={31}
           />
 
-          {questions.map((questionText, index) => (
-            <Question key={index}>
-              <QuestionHeader
-                question={questionText}
-                questionNumber={index + 1}
-              />
+          {questions.map((question) => (
+            <Question key={question.id}>
+              <QuestionHeader questionNumber={question.questionNumber}>
+                <QuestionHeaderQuestion question={question.question} />
+              </QuestionHeader>
 
               <Separator />
 
               <div className="flex flex-col gap-3">
                 <span className="text-sm font-medium mb-3">
-                  Multichoice Answers
+                  {question.answer.length > 1 ? 'Multichoice' : 'Singlechoise'}{' '}
+                  Answers
                 </span>
 
-                <QuestionReviewOption questionNumber={1} isCorrectAnswer />
-                <QuestionReviewOption questionNumber={2} />
-                <QuestionReviewOption questionNumber={3} />
+                {question.options.map((option, optionIndex) => (
+                  <QuestionReviewOption
+                    key={`${question.id}-option-${optionIndex}`}
+                    optionNumber={optionIndex + 1}
+                    answer={option.label}
+                    isCorrectAnswer={question?.answer?.includes(option.value)}
+                    onDoubleClick={() => {
+                      updateQuestion(question.id, {
+                        answer: [option.value],
+                      })
+                    }}
+                    onTextChange={(e) =>
+                      onOptionTextChange(e, question, optionIndex)
+                    }
+                  />
+                ))}
               </div>
             </Question>
           ))}

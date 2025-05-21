@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface HomeDragAndDropCardProps {
-  onSubmitFile: (file: File) => Promise<void>
+  onSubmitFile: (file: File) => void
 }
 
 const HomeDragAndDropCard = ({ onSubmitFile }: HomeDragAndDropCardProps) => {

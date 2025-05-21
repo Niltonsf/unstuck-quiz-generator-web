@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
+import QueryClientProvider from '@/providers/query-client-provider'
 
 const interFont = Inter({
   subsets: ['latin'],
@@ -22,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={interFont.variable}>
       <body className={`antialiased`}>
-        {children}
+        <QueryClientProvider>{children}</QueryClientProvider>
         <Toaster />
       </body>
     </html>

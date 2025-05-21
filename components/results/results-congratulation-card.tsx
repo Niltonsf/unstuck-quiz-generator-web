@@ -6,7 +6,11 @@ import { Button } from '../ui/button'
 import { Share } from 'lucide-react'
 import { DualProgressBar } from '../ui/dual-progress-bar/dual-progress-bar'
 
-const ResultsCongratulationCard = () => {
+interface ResultsCongratulationCardProps {
+  totalCorrectAnswers: number
+}
+
+const ResultsCongratulationCard = ({ totalCorrectAnswers }: ResultsCongratulationCardProps) => {
   return (
     <div className="flex flex-col items-center py-9 rounded-md border relative">
       <Image src={PartySymbols} alt={'party-symbols'} fill className="z-[-1]" />
@@ -23,9 +27,9 @@ const ResultsCongratulationCard = () => {
           Great Work Martinelli, you did very good on your quiz.
         </span>
 
-        <span className="text-center mt-9 text-[56px] font-semibold">7/10</span>
+        <span className="text-center mt-9 text-[56px] font-semibold">{totalCorrectAnswers}/10</span>
 
-        <DualProgressBar correct={7} total={10} className="mt-5" />
+        <DualProgressBar correct={totalCorrectAnswers} total={10} className="mt-5" />
       </div>
 
       <Button className="h-10 w-40 mt-7">

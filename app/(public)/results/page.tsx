@@ -8,37 +8,24 @@ import QuestionHeader from '@/components/ui/question/question-header'
 import { Separator } from '@/components/ui/separator'
 import { QuestionHeaderQuestion } from '@/components/ui/question/question-header-question'
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible'
-import QuestionAnswered from '@/components/ui/question/question-answered'
 import { cn } from '@/lib/utils'
-
-const mockQuestions = [
-  {
-    question:
-      'What innovative tool did Jake Harper develop to assist students with admissions into competitive academic majors at the University of Washington?',
-    options: [
-      { value: 'option-one', label: 'Option One' },
-      { value: 'option-two', label: 'Option Two' },
-      { value: 'option-three', label: 'Option Three' },
-      { value: 'option-four', label: 'Option Four' },
-    ],
-    correctAnswer: 'option-three',
-    selectedAnswer: 'option-one',
-  },
-  {
-    question: 'Which planet is known as the Red Planet?',
-    options: [
-      { value: 'mars', label: 'Mars' },
-      { value: 'venus', label: 'Venus' },
-      { value: 'jupiter', label: 'Jupiter' },
-      { value: 'saturn', label: 'Saturn' },
-    ],
-    correctAnswer: 'venus',
-    selectedAnswer: 'venus',
-  },
-]
+import { useQuizStore } from '@/store/use-quiz-store'
+import QuestionAnsweredOptions from '@/components/ui/question/question-answered-options'
 
 const ResultsPage = () => {
-  const [openStates, setOpenStates] = useState(mockQuestions.map(() => false))
+  const { title, answers, questions } = useQuizStore()
+
+  const [openStates, setOpenStates] = useState(questions.map(() => false))
+
+  const groupedQuestions = questions.map((question) => ({
+    question: question.question,
+    options: question.options,
+    isCorrect: answers[question.id].isCorrect,
+    correctAnswers: answers[question.id].correctAnswers,
+    selectedAnswer: answers[question.id].answer,
+  }))
+
+  const totalCorrectAnswers = groupedQuestions.filter((q) => q.isCorrect).length
 
   const toggleOpen = (index: number) => {
     setOpenStates((prev) =>
@@ -49,15 +36,17 @@ const ResultsPage = () => {
   return (
     <div className="min-h-screen flex justify-center pt-11">
       <div className="max-w-7xl w-full flex items-start flex-col pb-10 mx-5">
-        <ResultsHeader title={'Mathematics Quiz'} />
+        <ResultsHeader title={title} />
 
         <div className="max-w-4xl w-full self-center mt-16">
-          <ResultsCongratulationCard />
+          <ResultsCongratulationCard
+            totalCorrectAnswers={totalCorrectAnswers}
+          />
 
           <p className="font-medium text-xl mt-9 mb-6">Result Summary</p>
 
           <div className="flex flex-col gap-6">
-            {mockQuestions.map((question, index) => {
+            {groupedQuestions.map((question, index) => {
               const questionNumber = index + 1
 
               return (
@@ -72,11 +61,9 @@ const ResultsPage = () => {
                   >
                     <QuestionHeader
                       questionNumber={questionNumber}
-                      isCorrect={
-                        question.correctAnswer === question.selectedAnswer
-                      }
+                      isCorrect={question.isCorrect}
                     >
-                      <QuestionHeaderQuestion question="What innovative tool did Jake Harper develop to assist students with admissions into competitive academic majors at the University of Washington?" />
+                      <QuestionHeaderQuestion question={question.question} />
                     </QuestionHeader>
 
                     <CollapsibleContent
@@ -86,7 +73,7 @@ const ResultsPage = () => {
                     >
                       <Separator className="mb-5" />
 
-                      <QuestionAnswered question={question} />
+                      <QuestionAnsweredOptions question={question} />
                     </CollapsibleContent>
                   </Question>
                 </Collapsible>
