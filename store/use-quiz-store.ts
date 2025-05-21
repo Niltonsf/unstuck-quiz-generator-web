@@ -117,7 +117,7 @@ export const useQuizStore = create<QuizState>()(
       },
     }),
     {
-      name: 'quiz-storage',
+      name: '@unstuckquiz:quiz',
       partialize: (state) => ({
         title: state.title,
         currentIndex: state.currentIndex,
