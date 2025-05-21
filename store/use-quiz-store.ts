@@ -5,27 +5,26 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type QuizState = {
-  isEncrypted: boolean
+  currentIndex: number
   title: string
   setTitle: (title: string) => void
+  isEncrypted: boolean
   setIsEncrypted: (isEncrypted: boolean) => void
-  currentIndex: number
-  questions: Question[]
-  answers: Answers
-  selectAnswer: (questionId: string, answer: string) => void
+  answerQuestion: (
+    questionId: string,
+    answer: string,
+    validatedAnswerResponse?: ValidateAnswerResponse,
+  ) => void
   selectedOptions: Record<string, string>
   updateQuestion: (
     questionId: string,
     updatedQuestion: Partial<Question>,
   ) => void
+  answers: Answers
+  questions: Question[]
+  setQuestions: (questions: Question[]) => void
   next: () => void
   previous: () => void
-  setAnswer: (
-    questionId: string,
-    answer: string,
-    validatedAnswerResponse: ValidateAnswerResponse,
-  ) => void
-  setQuestions: (questions: Question[]) => void
   resetQuiz: () => void
   reset: () => void
 }
@@ -48,33 +47,29 @@ export const useQuizStore = create<QuizState>()(
       setIsEncrypted: (isEncrypted) => {
         set({ isEncrypted })
       },
-      setAnswer: (questionId, answer, validatedAnswerResponse) => {
-        const { answers } = get()
+      answerQuestion: (questionId, answer, validatedAnswerResponse) => {
+        const { selectedOptions, answers } = get()
 
-        const updatedAnswers = {
-          ...answers,
-          [questionId]: {
-            answer,
-            isCorrect: validatedAnswerResponse.isCorrect,
-            correctAnswers: validatedAnswerResponse.correctAnswers,
-          },
-        }
-
-        set(() => ({
-          answers: updatedAnswers,
-        }))
-      },
-      selectAnswer: (questionId, answer) => {
-        const { selectedOptions } = get()
-
-        const updatedAnswers = {
+        const updatedSelectedOptions = {
           ...selectedOptions,
           [questionId]: answer,
         }
 
-        set(() => ({
-          selectedOptions: updatedAnswers,
-        }))
+        const updatedAnswers = validatedAnswerResponse
+          ? {
+              ...answers,
+              [questionId]: {
+                answer,
+                isCorrect: validatedAnswerResponse.isCorrect,
+                correctAnswers: validatedAnswerResponse.correctAnswers,
+              },
+            }
+          : answers
+
+        set({
+          selectedOptions: updatedSelectedOptions,
+          answers: updatedAnswers,
+        })
       },
       updateQuestion: (
         questionId: string,
@@ -113,6 +108,7 @@ export const useQuizStore = create<QuizState>()(
       },
       reset: () => {
         set({
+          title: '',
           currentIndex: 0,
           questions: [],
           answers: {},
@@ -123,6 +119,7 @@ export const useQuizStore = create<QuizState>()(
     {
       name: 'quiz-storage',
       partialize: (state) => ({
+        title: state.title,
         currentIndex: state.currentIndex,
         answers: state.answers,
         selectedOptions: state.selectedOptions,

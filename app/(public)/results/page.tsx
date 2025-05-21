@@ -11,8 +11,12 @@ import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import { useQuizStore } from '@/store/use-quiz-store'
 import QuestionAnsweredOptions from '@/components/ui/question/question-answered-options'
+import { FooterFloatingActionButton } from '@/components/ui/footer-floating-action-button'
+import { useRouter } from 'next/navigation'
 
 const ResultsPage = () => {
+  const route = useRouter()
+
   const { title, answers, questions } = useQuizStore()
 
   const [openStates, setOpenStates] = useState(questions.map(() => false))
@@ -33,9 +37,13 @@ const ResultsPage = () => {
     )
   }
 
+  const handleGenerateNewQuiz = () => {
+    route.push('/')
+  }
+
   return (
     <div className="min-h-screen flex justify-center pt-11">
-      <div className="max-w-7xl w-full flex items-start flex-col pb-10 mx-5">
+      <div className="max-w-7xl w-full flex items-start flex-col mx-5 pb-32">
         <ResultsHeader title={title} />
 
         <div className="max-w-4xl w-full self-center mt-16">
@@ -82,6 +90,11 @@ const ResultsPage = () => {
           </div>
         </div>
       </div>
+
+      <FooterFloatingActionButton
+        label="Generate new quiz"
+        onClick={handleGenerateNewQuiz}
+      />
     </div>
   )
 }
