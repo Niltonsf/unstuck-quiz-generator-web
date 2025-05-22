@@ -12,10 +12,7 @@ interface StatusStyles {
   border: string
   text: string
   icon: React.ReactNode
-  label: {
-    large: string
-    small: string
-  }
+  label: string
 }
 
 const QuestionBadge = ({ status }: QuestionBadgeProps) => {
@@ -25,21 +22,21 @@ const QuestionBadge = ({ status }: QuestionBadgeProps) => {
       border: 'border-green-300',
       text: 'text-green-600',
       icon: <Check size={14} className="text-green-600" />,
-      label: { large: 'Correct Answer', small: 'Correct' },
+      label: 'Correct Answer',
     },
     INCORRECT: {
       bg: 'bg-red-100',
       border: 'border-red-300',
       text: 'text-red-600',
       icon: <X size={14} className="text-red-600" />,
-      label: { large: 'Wrong Answer', small: 'Wrong' },
+      label: 'Wrong Answer',
     },
     PARTIAL: {
       bg: 'bg-yellow-100',
       border: 'border-yellow-300',
       text: 'text-yellow-700',
       icon: <Minus size={14} className="text-yellow-700" />,
-      label: { large: 'Partially Correct', small: 'Partial' },
+      label: 'Partially Correct',
     },
   }
 
@@ -59,9 +56,8 @@ const QuestionBadge = ({ status }: QuestionBadgeProps) => {
     >
       {style?.icon}
 
-      <span className={cn('text-xs font-medium', style.text)}>
-        <span className="sm:inline hidden">{style.label.large}</span>
-        <span className="sm:hidden inline">{style.label.small}</span>
+      <span className={cn('text-xs font-medium sm:inline hidden', style.text)}>
+        <span>{style.label}</span>
       </span>
     </div>
   )

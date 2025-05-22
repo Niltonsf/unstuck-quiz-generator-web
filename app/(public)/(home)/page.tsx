@@ -50,8 +50,8 @@ const HomePage = () => {
       {submitFileMuttation.isPending ? (
         <LoadingOverlay
           key="loading-overlay-home"
-          title={'Generating Quiz Questions'}
-          subtitle={'Reading your materials...'}
+          title={'Generating Quiz Questions with AI'}
+          subtitle={'Analyzing your materials — this may take a moment...'}
           onAnimationEnd={() => setAnimationComplete(true)}
         />
       ) : (

@@ -112,8 +112,8 @@ const ReviewPage = () => {
               <Alert>
                 <Info>Heads up!</Info>
                 <AlertDescription>
-                  Double-click an option to select it as correct. Double-click
-                  it again to unselect.
+                  Double-click or press and hold an option to mark it as
+                  correct. Repeat the action to unmark it.
                   <br />
                   <strong>
                     Note: Each question must have at least one correct answer
