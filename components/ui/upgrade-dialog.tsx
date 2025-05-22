@@ -98,7 +98,9 @@ const UpgradeDialog = () => {
 
         <DialogFooter className="sm:justify-center mt-4">
           <DialogClose asChild>
-            <Button variant="ghost">Close</Button>
+            <Button variant="ghost" className="w-full">
+              Close
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

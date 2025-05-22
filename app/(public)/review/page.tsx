@@ -21,13 +21,15 @@ import { FooterFloatingActionButton } from '@/components/ui/footer-floating-acti
 import ReviewAddNameDialog from '@/components/review/review-add-name-dialog'
 import { delay } from '@/lib/time'
 import { isProbablyEncrypted } from '@/lib/string'
+import { AnimatePresence } from 'framer-motion'
 
 const ReviewPage = () => {
   const router = useRouter()
+  const { questions, updateQuestion, setQuestions } = useQuizStore()
+
   const [isReviewAddNameDialogOpen, setIsReviewAddNameDialogOpen] =
     useState(false)
-
-  const { questions, updateQuestion, setQuestions } = useQuizStore()
+  const [animationComplete, setAnimationComplete] = useState(false)
 
   const decryptMutation = useMutation({
     mutationFn: () => QuestionService.decryptQuiz(questions),
@@ -43,21 +45,24 @@ const ReviewPage = () => {
       await delay(3000)
 
       setQuestions(data)
-
-      router.push('/quiz')
     },
     onError: handleError,
   })
+
+  const shouldRedirectToQuiz =
+    createQuizMutation?.isSuccess && animationComplete
 
   const handleOpenAddNameDialog = () => {
     setIsReviewAddNameDialogOpen(true)
   }
 
   const onStartQuiz = () => {
+    setAnimationComplete(false)
+
     createQuizMutation.mutate(undefined)
   }
 
-  const onOptionTextChange = (
+  const onOptionTextUpdate = (
     e: React.ChangeEvent<HTMLInputElement>,
     question: QuestionType,
     optionIndex: number,
@@ -91,87 +96,103 @@ const ReviewPage = () => {
     }
   }, [])
 
-  if (createQuizMutation?.isPending || decryptMutation?.isPending) {
-    return (
-      <LoadingOverlay
-        title={'Preparing Quiz for Practise'}
-        subtitle={'Preparing the quiz so you can now pratice...'}
-      />
-    )
+  useEffect(() => {
+    if (shouldRedirectToQuiz) {
+      router.push('/quiz')
+    }
+  }, [router, shouldRedirectToQuiz])
+
+  if (shouldRedirectToQuiz) {
+    return <></>
   }
 
   return (
-    <div className="min-h-screen flex justify-center pt-11">
-      <div className="max-w-7xl w-full flex items-start flex-col pb-32">
-        <ReviewHeader />
+    <AnimatePresence mode="wait">
+      {createQuizMutation?.isPending || decryptMutation?.isPending ? (
+        <LoadingOverlay
+          key="loading-overlay-review"
+          title={'Preparing Quiz for Practise'}
+          subtitle={'Preparing the quiz so you can now pratice...'}
+          onAnimationEnd={() => setAnimationComplete(true)}
+        />
+      ) : (
+        <div className="min-h-screen flex justify-center pt-11">
+          <div className="max-w-7xl w-full flex items-start flex-col pb-32">
+            <ReviewHeader />
 
-        <div className="flex self-center w-full max-w-3xl mt-5 h-full items-start flex-col gap-5 px-4 sm:px-6">
-          <LogoTitle
-            title="Review & Edit Questions"
-            titleClassName="text-3xl"
-            wrapperClassName="mb-2.5 sm:self-start self-center"
-            logoSize={31}
+            <div className="flex self-center w-full max-w-3xl mt-5 h-full items-start flex-col gap-5 px-4 sm:px-6">
+              <LogoTitle
+                title="Review & Edit Questions"
+                titleClassName="text-3xl"
+                wrapperClassName="mb-2.5 sm:self-start self-center"
+                logoSize={31}
+              />
+
+              <Alert>
+                <Info>Heads up!</Info>
+                <AlertDescription>
+                  Double-click an option to select it as correct. Double-click
+                  it again to unselect.
+                  <br />
+                  <strong>
+                    Note: Each question must have at least one correct answer.
+                  </strong>
+                </AlertDescription>
+              </Alert>
+
+              {questions.map((question) => (
+                <Question key={question.id}>
+                  <QuestionHeader questionNumber={question.questionNumber}>
+                    <QuestionHeaderQuestion question={question.question} />
+                  </QuestionHeader>
+
+                  <Separator />
+
+                  <div className="flex flex-col gap-3">
+                    <span className="text-sm font-medium mb-3">
+                      {question.answer.length > 1
+                        ? 'Multichoice'
+                        : 'Singlechoise'}{' '}
+                      Answers
+                    </span>
+
+                    {question.options.map((option, optionIndex) => (
+                      <QuestionReviewOption
+                        key={`${question.id}-option-${optionIndex}`}
+                        optionNumber={optionIndex + 1}
+                        answer={option.label}
+                        isCorrectAnswer={question?.answer?.includes(
+                          option.value,
+                        )}
+                        onDoubleClick={() => {
+                          updateQuestion(question.id, {
+                            answer: [option.value],
+                          })
+                        }}
+                        onTextChange={(e) =>
+                          onOptionTextUpdate(e, question, optionIndex)
+                        }
+                      />
+                    ))}
+                  </div>
+                </Question>
+              ))}
+            </div>
+          </div>
+
+          <FooterFloatingActionButton
+            label="Start Quiz"
+            onClick={handleOpenAddNameDialog}
           />
 
-          <Alert>
-            <Info>Heads up!</Info>
-            <AlertDescription>
-              Double-click an option to select it as correct. Double-click it
-              again to unselect.
-              <br />
-              <strong>
-                Note: Each question must have at least one correct answer.
-              </strong>
-            </AlertDescription>
-          </Alert>
-
-          {questions.map((question) => (
-            <Question key={question.id}>
-              <QuestionHeader questionNumber={question.questionNumber}>
-                <QuestionHeaderQuestion question={question.question} />
-              </QuestionHeader>
-
-              <Separator />
-
-              <div className="flex flex-col gap-3">
-                <span className="text-sm font-medium mb-3">
-                  {question.answer.length > 1 ? 'Multichoice' : 'Singlechoise'}{' '}
-                  Answers
-                </span>
-
-                {question.options.map((option, optionIndex) => (
-                  <QuestionReviewOption
-                    key={`${question.id}-option-${optionIndex}`}
-                    optionNumber={optionIndex + 1}
-                    answer={option.label}
-                    isCorrectAnswer={question?.answer?.includes(option.value)}
-                    onDoubleClick={() => {
-                      updateQuestion(question.id, {
-                        answer: [option.value],
-                      })
-                    }}
-                    onTextChange={(e) =>
-                      onOptionTextChange(e, question, optionIndex)
-                    }
-                  />
-                ))}
-              </div>
-            </Question>
-          ))}
+          <ReviewAddNameDialog
+            open={isReviewAddNameDialogOpen}
+            setOpen={setIsReviewAddNameDialogOpen}
+            onStartQuiz={onStartQuiz}
+          />
         </div>
-      </div>
-
-      <FooterFloatingActionButton
-        label="Start Quiz"
-        onClick={handleOpenAddNameDialog}
-      />
-
-      <ReviewAddNameDialog
-        open={isReviewAddNameDialogOpen}
-        setOpen={setIsReviewAddNameDialogOpen}
-        onStartQuiz={onStartQuiz}
-      />
-    </div>
+      )}
+    </AnimatePresence>
   )
 }
 
