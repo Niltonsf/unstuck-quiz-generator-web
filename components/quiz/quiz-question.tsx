@@ -1,4 +1,3 @@
-import { Separator } from '@radix-ui/react-separator'
 import React from 'react'
 import Question from '../ui/question/question'
 import QuestionHeader from '../ui/question/question-header'
@@ -8,24 +7,31 @@ import { QuizCorrectAnswer } from './quiz-correct-answer'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { Question as QuestionType } from '@/models/question'
 import { Answer } from '@/models/answer'
+import { Separator } from '../ui/separator'
 
 interface QuizQuestionProps {
   currentQuestion: QuestionType
   isWaiting: boolean
-  answer: Answer
+  answered: Answer
 }
 
 const QuizQuestion = ({
   currentQuestion,
   isWaiting,
-  answer,
+  answered,
 }: QuizQuestionProps) => {
-  const { currentIndex, selectedOptions, answerQuestion } = useQuizStore()
+  const { currentIndex, selectedAnswers, handleSelectAnswer } = useQuizStore()
 
   return (
     <div className="flex flex-1 w-full items-center justify-center my-3 flex-col gap-6">
       <Question>
         <QuestionHeader questionNumber={currentIndex + 1}>
+          {currentQuestion?.answer?.length > 1 && (
+            <div className="text-sm text-blue-600 font-medium">
+              This is a multiple choice question. Select all that apply.
+            </div>
+          )}
+
           <QuestionHeaderQuestion question={currentQuestion?.question} />
         </QuestionHeader>
 
@@ -33,14 +39,14 @@ const QuizQuestion = ({
 
         <QuestionOptions
           currentQuestion={currentQuestion}
-          selected={selectedOptions[currentQuestion?.id]}
-          onSelect={(value) => answerQuestion(currentQuestion?.id, value)}
-          disabled={!!answer || isWaiting}
-          answer={answer}
+          selected={selectedAnswers[currentQuestion?.id] || []}
+          onSelect={(value) => handleSelectAnswer(currentQuestion.id, value)}
+          disabled={!!answered || isWaiting}
+          answered={answered}
         />
       </Question>
 
-      {(isWaiting || !!answer) && answer.isCorrect && <QuizCorrectAnswer />}
+      {(isWaiting || !!answered) && answered.isCorrect && <QuizCorrectAnswer />}
     </div>
   )
 }

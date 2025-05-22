@@ -1,5 +1,5 @@
 export interface Answer {
-  answer: string
+  answer: string[]
   isCorrect: boolean
   correctAnswers: string[]
 }

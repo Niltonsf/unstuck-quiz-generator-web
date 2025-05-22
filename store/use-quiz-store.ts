@@ -10,10 +10,11 @@ type QuizState = {
   setTitle: (title: string) => void
   answerQuestion: (
     questionId: string,
-    answer: string,
+    answers: string[],
     validatedAnswerResponse?: ValidateAnswerResponse,
   ) => void
-  selectedOptions: Record<string, string>
+  handleSelectAnswer: (questionId: string, answer: string) => void
+  selectedAnswers: Record<string, string[]>
   updateQuestion: (
     questionId: string,
     updatedQuestion: Partial<Question>,
@@ -34,26 +35,55 @@ export const useQuizStore = create<QuizState>()(
       currentIndex: 0,
       questions: [],
       answers: {},
-      selectedOptions: {},
+      selectedAnswers: {},
       setTitle: (title) => {
         set({ title })
       },
       setQuestions: (questions) => {
         set({ questions })
       },
-      answerQuestion: (questionId, answer, validatedAnswerResponse) => {
-        const { selectedOptions, answers } = get()
+      handleSelectAnswer: (questionId: string, answer: string) => {
+        const { selectedAnswers, questions } = get()
+
+        const currentSelected = selectedAnswers[questionId] || []
+        const question = questions.find((q) => q.id === questionId)
+        const questionAnswerLength = question?.answer?.length || 0
+        const isMultipleChoice = questionAnswerLength > 1
+
+        let updatedAnswersArray: string[]
+
+        if (isMultipleChoice) {
+          const alreadySelected = currentSelected.includes(answer)
+
+          updatedAnswersArray = alreadySelected
+            ? currentSelected?.filter((a) => a !== answer)
+            : [...currentSelected, answer]
+        } else {
+          updatedAnswersArray = [answer]
+        }
 
         const updatedSelectedOptions = {
-          ...selectedOptions,
-          [questionId]: answer,
+          ...selectedAnswers,
+          [questionId]: updatedAnswersArray,
         }
+
+        set({
+          selectedAnswers: updatedSelectedOptions,
+          // answers: updatedAnswers,
+        })
+      },
+      answerQuestion: (
+        questionId: string,
+        selectedAnswers: string[],
+        validatedAnswerResponse?: ValidateAnswerResponse,
+      ) => {
+        const { answers } = get()
 
         const updatedAnswers = validatedAnswerResponse
           ? {
               ...answers,
               [questionId]: {
-                answer,
+                answer: selectedAnswers,
                 isCorrect: validatedAnswerResponse.isCorrect,
                 correctAnswers: validatedAnswerResponse.correctAnswers,
               },
@@ -61,7 +91,10 @@ export const useQuizStore = create<QuizState>()(
           : answers
 
         set({
-          selectedOptions: updatedSelectedOptions,
+          selectedAnswers: {
+            ...get().selectedAnswers,
+            [questionId]: selectedAnswers,
+          },
           answers: updatedAnswers,
         })
       },
@@ -97,7 +130,7 @@ export const useQuizStore = create<QuizState>()(
         set({
           currentIndex: 0,
           answers: {},
-          selectedOptions: {},
+          selectedAnswers: {},
         })
       },
       reset: () => {
@@ -106,7 +139,7 @@ export const useQuizStore = create<QuizState>()(
           currentIndex: 0,
           questions: [],
           answers: {},
-          selectedOptions: {},
+          selectedAnswers: {},
         })
       },
     }),
@@ -116,7 +149,7 @@ export const useQuizStore = create<QuizState>()(
         title: state.title,
         currentIndex: state.currentIndex,
         answers: state.answers,
-        selectedOptions: state.selectedOptions,
+        selectedAnswers: state.selectedAnswers,
         questions: state.questions,
       }),
     },

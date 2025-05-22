@@ -1,5 +1,5 @@
 import React from 'react'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { Question } from '@/models/question'
@@ -7,10 +7,10 @@ import { Answer } from '@/models/answer'
 
 interface QuestionOptionsProps {
   currentQuestion: Question
-  onSelect: (value: string) => void
-  selected: string
   disabled: boolean
-  answer: Answer
+  answered: Answer
+  onSelect?: (value: string) => void
+  selected?: string[]
 }
 
 const QuestionOptions = ({
@@ -18,26 +18,32 @@ const QuestionOptions = ({
   onSelect,
   selected,
   disabled,
-  answer,
+  answered,
 }: QuestionOptionsProps) => {
-  const hasAnswered = !!answer
+  const hasAnswered = !!answered
 
   return (
-    <RadioGroup value={selected} onValueChange={onSelect}>
-      {currentQuestion?.options.map((option, index) => {
-        const isOptionCorrect = answer?.correctAnswers.includes(option.value)
-        const isUserSelection = option.value === selected
-        const isUserCorrect = answer?.isCorrect
+    <div className="flex flex-col gap-2">
+      {currentQuestion?.options?.map((option, index) => {
+        const isOptionCorrect = answered?.correctAnswers.includes(option.value)
+        const isUserSelection = selected?.includes(option.value)
+        const isUserCorrect = answered?.isCorrect
 
-        const shouldShowGreen =
-          hasAnswered && isOptionCorrect && (isUserCorrect || !isUserSelection)
-        const shouldShowRed =
+        const isCorrectButNotSelected =
+          hasAnswered &&
+          !isUserSelection &&
+          answered.correctAnswers.includes(option.value) &&
+          answered.correctAnswers.length > 1 &&
+          !answered.isCorrect
+
+        const isCorrect = hasAnswered && isOptionCorrect
+        const isIncorrect =
           hasAnswered && !isUserCorrect && isUserSelection && !isOptionCorrect
 
         return (
           <div
             key={`${currentQuestion.id}-${option.value}-${index}`}
-            onClick={() => onSelect(option.value)}
+            onClick={() => !disabled && onSelect && onSelect(option.value)}
             className={cn(
               'flex items-center space-x-2 bg-input-background h-[54px] rounded-lg px-5 cursor-pointer transition-colors duration-200 ease-in-out border-input-background border',
               isUserSelection && 'bg-primary/10 border-primary',
@@ -45,17 +51,18 @@ const QuestionOptions = ({
               !disabled && 'hover:bg-primary/10 pointer-events-auto',
               disabled && 'cursor-not-allowed pointer-events-none',
 
-              shouldShowGreen && 'bg-green-100 border-green-500',
-              shouldShowRed && 'bg-red-100 border-red-500',
+              isCorrect && 'bg-green-100 border-green-500',
+              isIncorrect && 'bg-red-100 border-red-500',
             )}
           >
-            <RadioGroupItem
+            <Checkbox
               id={`${currentQuestion.id}-${option.value}`}
-              value={option.value}
-              disabled={disabled}
+              checked={isUserSelection}
               className={cn(
-                shouldShowGreen && 'border-green-500!',
-                shouldShowRed && 'border-red-500!',
+                'h-4 w-4 rounded-md border-3 border-gray-300 bg-transparent data-[state=checked]:border-primary data-[state=checked]:bg-transparent',
+                isCorrect && 'border-green-500!',
+                isIncorrect && 'border-red-500!',
+                isCorrectButNotSelected && 'border-gray-300!',
               )}
             />
 
@@ -64,8 +71,9 @@ const QuestionOptions = ({
               className={cn(
                 !disabled && 'cursor-pointer',
                 disabled && 'cursor-not-allowed',
-                shouldShowGreen && 'text-green-600',
-                shouldShowRed && 'text-red-600',
+                isCorrect && 'text-green-600',
+                isIncorrect && 'text-red-600',
+                isCorrectButNotSelected && 'text-black',
               )}
             >
               {option.label}
@@ -73,7 +81,7 @@ const QuestionOptions = ({
           </div>
         )
       })}
-    </RadioGroup>
+    </div>
   )
 }
 
