@@ -31,7 +31,7 @@ const QuestionReviewOption = ({
           className="flex flex-1 bg-transparent border-none outline-none px-5 h-full font-medium"
         />
 
-        {isCorrectAnswer && <QuestionBadge isCorrect />}
+        {isCorrectAnswer && <QuestionBadge status="CORRECT" />}
       </div>
     </div>
   )

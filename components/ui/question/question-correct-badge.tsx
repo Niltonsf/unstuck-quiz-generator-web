@@ -45,15 +45,19 @@ const QuestionBadge = ({ status }: QuestionBadgeProps) => {
 
   const style = statusStyles[status]
 
+  if (!style) {
+    return null
+  }
+
   return (
     <div
       className={cn(
         'flex items-center h-8 rounded-md mr-2.5 border gap-1.5 px-2.5',
-        style.bg,
-        style.border,
+        style?.bg,
+        style?.border,
       )}
     >
-      {style.icon}
+      {style?.icon}
 
       <span className={cn('text-xs font-medium', style.text)}>
         <span className="sm:inline hidden">{style.label.large}</span>

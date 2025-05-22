@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { toast } from 'sonner'
 import { QuizHeader } from '@/components/quiz/quiz-header'
-import { handleError } from '@/lib/error-handler'
+import { handleError } from '@/utils/error-handler'
 import ToastProgress from '@/components/ui/toast-progress'
 import QuizQuestion from '@/components/quiz/quiz-question'
 import { QuizService } from '@/services/quiz-service'
@@ -47,7 +47,7 @@ const QuizPage = () => {
         return
       }
 
-      if (myAnswers.length === 0) {
+      if (myAnswers?.length === 0 || !myAnswers) {
         toast('Please select an answer before continuing.')
         return
       }

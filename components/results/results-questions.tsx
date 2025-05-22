@@ -7,7 +7,7 @@ import { QuestionHeaderQuestion } from '../ui/question/question-header-question'
 import { Collapsible, CollapsibleContent } from '../ui/collapsible'
 import { Separator } from '../ui/separator'
 import QuestionOptions from '../ui/question/question-options'
-import { QuestionStatus } from '@/models/question'
+import { getQuestionStatus } from '@/utils/question'
 
 const ResultsQuestions = () => {
   const { answers, questions } = useQuizStore()
@@ -27,17 +27,7 @@ const ResultsQuestions = () => {
         const isCorrect = answers[question?.id].isCorrect
         const correctAnswers = answers[question?.id].correctAnswers
         const userAnswers = answers[question?.id].answer
-        let status: QuestionStatus = isCorrect ? 'CORRECT' : 'INCORRECT'
-
-        if (correctAnswers.length > 1 && !isCorrect) {
-          const hasAtLeastOneCorrect = userAnswers.some((ans) =>
-            correctAnswers.includes(ans),
-          )
-
-          if (hasAtLeastOneCorrect) {
-            status = 'PARTIAL'
-          }
-        }
+        const status = getQuestionStatus(userAnswers, correctAnswers)
 
         return (
           <Collapsible

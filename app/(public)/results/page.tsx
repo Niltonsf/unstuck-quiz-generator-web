@@ -13,9 +13,35 @@ const ResultsPage = () => {
 
   const { title, answers } = useQuizStore()
 
-  const totalCorrectAnswers = Object.values(answers).filter(
-    (answer) => answer.isCorrect,
-  ).length
+  const totalCorrectAnswers = Object.values(answers).reduce((total, answer) => {
+    const correctAnswers = answer.correctAnswers || []
+    const userAnswers = answer.answer || []
+    const isCorrect = answer.isCorrect
+
+    if (isCorrect) {
+      return total + 1
+    }
+
+    const hasIncorrectSelections = userAnswers.some(
+      (ans) => !correctAnswers.includes(ans),
+    )
+
+    if (hasIncorrectSelections) {
+      return total
+    }
+
+    const correctSelections = userAnswers.filter((ans) =>
+      correctAnswers.includes(ans),
+    )
+
+    if (correctSelections.length > 0 && !hasIncorrectSelections) {
+      const partialScore = correctSelections.length / correctAnswers.length
+
+      return total + partialScore
+    }
+
+    return total
+  }, 0)
 
   const handleGenerateNewQuiz = () => {
     route.push('/')

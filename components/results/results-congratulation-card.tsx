@@ -14,9 +14,10 @@ const ResultsCongratulationCard = ({
   totalCorrectAnswers,
 }: ResultsCongratulationCardProps) => {
   const [name, setName] = useState('')
+  const totalCorrectAnswersToFixed = totalCorrectAnswers?.toFixed(1)
 
   const shareToLinkedIn = () => {
-    const shareText = `I scored ${totalCorrectAnswers}/10 on this quiz generator! 🎉 Try it yourself https://www.unstuck-quiz.com`
+    const shareText = `I scored ${totalCorrectAnswersToFixed}/10 on this quiz generator! 🎉 Try it yourself https://www.unstuck-quiz.com`
     const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${shareText}`
 
     window.open(linkedInUrl, '_blank', 'noopener,noreferrer')
@@ -61,7 +62,7 @@ const ResultsCongratulationCard = ({
         </span>
 
         <span className="text-center mt-9 text-[56px] font-semibold">
-          {totalCorrectAnswers}/10
+          {totalCorrectAnswersToFixed}/10
         </span>
 
         <ScoreBar correct={totalCorrectAnswers} total={10} className="mt-5" />
