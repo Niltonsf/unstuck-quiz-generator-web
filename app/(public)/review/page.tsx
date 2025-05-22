@@ -114,7 +114,8 @@ const ReviewPage = () => {
                   it again to unselect.
                   <br />
                   <strong>
-                    Note: Each question must have at least one correct answer.
+                    Note: Each question must have at least one correct answer
+                    and a maximum of 3.
                   </strong>
                 </AlertDescription>
               </Alert>

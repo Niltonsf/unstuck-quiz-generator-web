@@ -1,4 +1,3 @@
-import { Separator } from '@radix-ui/react-separator'
 import React from 'react'
 import Question from '../ui/question/question'
 import QuestionHeader from '../ui/question/question-header'
@@ -7,6 +6,7 @@ import QuestionReviewOption from '../ui/question/question-review-option'
 import { Question as QuestionType } from '@/models/question'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { toast } from 'sonner'
+import { Separator } from '../ui/separator'
 
 const ReviewQuestions = () => {
   const { questions, updateQuestion } = useQuizStore()
