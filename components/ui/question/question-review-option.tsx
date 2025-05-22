@@ -1,5 +1,5 @@
 import React from 'react'
-import { QuestionBadge } from './question-correct-badge'
+import { QuestionBadge } from './question-badge'
 
 interface QuestionReviewOptionProps {
   optionNumber: number

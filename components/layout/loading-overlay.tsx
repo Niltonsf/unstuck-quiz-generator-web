@@ -19,7 +19,7 @@ const LoadingOverlay = ({
 }: LoadingOverlayProps) => {
   return (
     <motion.div
-      className="fixed inset-0 bg-white z-50 flex items-center justify-center flex-col text-center"
+      className="fixed inset-0 bg-white z-50 flex items-center justify-center flex-col text-center px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

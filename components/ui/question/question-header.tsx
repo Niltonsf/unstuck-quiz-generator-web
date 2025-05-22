@@ -1,6 +1,6 @@
 import React from 'react'
 import { CardHeader } from '@/components/ui/card'
-import { QuestionBadge } from './question-correct-badge'
+import { QuestionBadge } from './question-badge'
 import { QuestionStatus } from '@/models/question'
 
 interface QuestionHeaderProps {
