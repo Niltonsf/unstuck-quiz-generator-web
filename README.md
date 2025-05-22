@@ -1,7 +1,6 @@
 # 🧠 Unstuck Quiz Generator Frontend
 
 Generate 10 quiz questions from any uploaded PDF file using AI.  
-This project features a **Next.js** frontend and a **FastAPI** backend.
 
 ## 🛠️ Features
 - Upload a PDF and get 10 AI-generated questions from its content
@@ -10,7 +9,7 @@ This project features a **Next.js** frontend and a **FastAPI** backend.
 
 ## 📦 Tech Stack
 - **Frontend**: [Next.js](https://nextjs.org/)
-- **Queries**: [ReactQuery](https://tanstack.com/query/latest/docs/framework/react/overview)
+- **Queries**: [React Query](https://tanstack.com/query/latest/docs/framework/react/overview)
 - **State Managment**: [Zustand](https://zustand-demo.pmnd.rs/)
 
 ## 🚀 Getting Started
