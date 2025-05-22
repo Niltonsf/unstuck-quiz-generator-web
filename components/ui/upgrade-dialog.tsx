@@ -30,7 +30,7 @@ const UpgradeDialog = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button className="bg-black hover:bg-black/70">
-          <Zap className="mr-2 h-4 w-4" />
+          <Zap className="h-4 w-4" />
           <span className="hidden sm:inline">Upgrade</span>
         </Button>
       </DialogTrigger>

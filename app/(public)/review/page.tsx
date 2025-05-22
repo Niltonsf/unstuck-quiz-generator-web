@@ -2,17 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import LogoTitle from '@/components/ui/logo-title'
-import Question from '@/components/ui/question/question'
-import QuestionHeader from '@/components/ui/question/question-header'
-import { Separator } from '@/components/ui/separator'
-import QuestionReviewOption from '@/components/ui/question/question-review-option'
 import { useRouter } from 'next/navigation'
 import LoadingOverlay from '@/components/layout/loading-overlay'
 import { ReviewHeader } from '@/components/review/review-header'
 import { useQuizStore } from '@/store/use-quiz-store'
-import { QuestionHeaderQuestion } from '@/components/ui/question/question-header-question'
 import { handleError } from '@/lib/error-handler'
-import { Question as QuestionType } from '@/models/question'
 import { QuestionService } from '@/services/question-service'
 import { useMutation } from '@tanstack/react-query'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -22,10 +16,13 @@ import ReviewAddNameDialog from '@/components/review/review-add-name-dialog'
 import { delay } from '@/lib/time'
 import { isProbablyEncrypted } from '@/lib/string'
 import { AnimatePresence } from 'framer-motion'
+import { ReviewQuestionsSkeleton } from '@/components/review/review-questions-skeleton'
+import ReviewQuestions from '@/components/review/review-questions'
+import ReviewNoQuestions from '@/components/review/review-no-questions'
 
 const ReviewPage = () => {
   const router = useRouter()
-  const { questions, updateQuestion, setQuestions } = useQuizStore()
+  const { questions, setQuestions } = useQuizStore()
 
   const [isReviewAddNameDialogOpen, setIsReviewAddNameDialogOpen] =
     useState(false)
@@ -33,7 +30,9 @@ const ReviewPage = () => {
 
   const decryptMutation = useMutation({
     mutationFn: () => QuestionService.decryptQuiz(questions),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await delay(1000)
+
       setQuestions(data)
     },
     onError: handleError,
@@ -62,26 +61,6 @@ const ReviewPage = () => {
     createQuizMutation.mutate(undefined)
   }
 
-  const onOptionTextUpdate = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    question: QuestionType,
-    optionIndex: number,
-  ) => {
-    const value = e.target.value
-
-    const updatedOptions = question.options.map((option, index) => {
-      if (index === optionIndex) {
-        return { ...option, label: value }
-      }
-
-      return option
-    })
-
-    updateQuestion(question.id, {
-      options: updatedOptions,
-    })
-  }
-
   useEffect(() => {
     const hasEncryptedAnswer = questions.some((q) =>
       q.answer.some((a) => isProbablyEncrypted(a)),
@@ -108,7 +87,7 @@ const ReviewPage = () => {
 
   return (
     <AnimatePresence mode="wait">
-      {createQuizMutation?.isPending || decryptMutation?.isPending ? (
+      {createQuizMutation?.isPending ? (
         <LoadingOverlay
           key="loading-overlay-review"
           title={'Preparing Quiz for Practise'}
@@ -140,49 +119,25 @@ const ReviewPage = () => {
                 </AlertDescription>
               </Alert>
 
-              {questions.map((question) => (
-                <Question key={question.id}>
-                  <QuestionHeader questionNumber={question.questionNumber}>
-                    <QuestionHeaderQuestion question={question.question} />
-                  </QuestionHeader>
-
-                  <Separator />
-
-                  <div className="flex flex-col gap-3">
-                    <span className="text-sm font-medium mb-3">
-                      {question.answer.length > 1
-                        ? 'Multichoice'
-                        : 'Singlechoise'}{' '}
-                      Answers
-                    </span>
-
-                    {question.options.map((option, optionIndex) => (
-                      <QuestionReviewOption
-                        key={`${question.id}-option-${optionIndex}`}
-                        optionNumber={optionIndex + 1}
-                        answer={option.label}
-                        isCorrectAnswer={question?.answer?.includes(
-                          option.value,
-                        )}
-                        onDoubleClick={() => {
-                          updateQuestion(question.id, {
-                            answer: [option.value],
-                          })
-                        }}
-                        onTextChange={(e) =>
-                          onOptionTextUpdate(e, question, optionIndex)
-                        }
-                      />
-                    ))}
-                  </div>
-                </Question>
-              ))}
+              {decryptMutation.isPending ? (
+                <ReviewQuestionsSkeleton />
+              ) : !questions ? (
+                <ReviewNoQuestions />
+              ) : (
+                <ReviewQuestions />
+              )}
             </div>
           </div>
 
           <FooterFloatingActionButton
             label="Start Quiz"
             onClick={handleOpenAddNameDialog}
+            buttonProps={{
+              disabled:
+                createQuizMutation.isPending ||
+                !questions ||
+                decryptMutation.isPending,
+            }}
           />
 
           <ReviewAddNameDialog
