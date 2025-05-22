@@ -61,8 +61,8 @@ const HomePage = () => {
               <LogoTitle title="Unstuck Quiz Generator" />
 
               <span className="text-muted-foreground max-w-[542px] text-center">
-                Generate quiz quiz your course materials, or textbooks to help
-                you study faster and smarter.
+                Generate quizzes from your course materials, or textbooks to
+                help you study faster and smarter.
               </span>
             </div>
 
