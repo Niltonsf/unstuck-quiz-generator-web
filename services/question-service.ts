@@ -6,14 +6,7 @@ export interface GenerateQuestionsResponse {
   questions: Question[]
 }
 
-export interface ValidateAnswerResponse {
-  isCorrect: boolean
-  correctAnswers: string[]
-}
-
 type DecryptQuizResponse = Question[]
-
-type CreateQuizResponse = Question[]
 
 export class QuestionService {
   static async generateQuestions(
@@ -23,7 +16,7 @@ export class QuestionService {
 
     formData.append('file', pdf)
 
-    const response = await http.post('/generate-questions', formData, {
+    const response = await http.post('/questions/generate', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -32,31 +25,11 @@ export class QuestionService {
     return response.data
   }
 
-  static async createQuiz(questions: Question[]): Promise<CreateQuizResponse> {
-    const response = await http.post('/create-quiz', {
-      data: questions,
-    })
-
-    return response.data
-  }
-
   static async decryptQuiz(
     questions: Question[],
   ): Promise<DecryptQuizResponse> {
-    const response = await http.post('/decrypt-quiz', {
+    const response = await http.post('/questions/decrypt', {
       data: questions,
-    })
-
-    return response.data
-  }
-
-  static async validateAnswer(
-    question: Question,
-    userAnswer: string,
-  ): Promise<ValidateAnswerResponse> {
-    const response = await http.post('/validate-answer', {
-      question,
-      userAnswer,
     })
 
     return response.data

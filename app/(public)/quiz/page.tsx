@@ -7,10 +7,10 @@ import { useRouter } from 'next/navigation'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { toast } from 'sonner'
 import { QuizHeader } from '@/components/quiz/quiz-header'
-import { QuestionService } from '@/services/question-service'
 import { handleError } from '@/lib/error-handler'
 import ToastProgress from '@/components/ui/toast-progress'
 import QuizQuestion from '@/components/quiz/quiz-question'
+import { QuizService } from '@/services/quiz-service'
 
 const QuizPage = () => {
   const router = useRouter()
@@ -62,7 +62,7 @@ const QuizPage = () => {
         return
       }
 
-      const validatedAnswerResult = await QuestionService.validateAnswer(
+      const validatedAnswerResult = await QuizService.validateAnswer(
         currentQuestion,
         selectedAnswer,
       )

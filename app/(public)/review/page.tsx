@@ -19,6 +19,7 @@ import { AnimatePresence } from 'framer-motion'
 import { ReviewQuestionsSkeleton } from '@/components/review/review-questions-skeleton'
 import ReviewQuestions from '@/components/review/review-questions'
 import ReviewNoQuestions from '@/components/review/review-no-questions'
+import { QuizService } from '@/services/quiz-service'
 
 const ReviewPage = () => {
   const router = useRouter()
@@ -39,7 +40,7 @@ const ReviewPage = () => {
   })
 
   const createQuizMutation = useMutation({
-    mutationFn: () => QuestionService.createQuiz(questions),
+    mutationFn: () => QuizService.createQuiz(questions),
     onSuccess: async (data) => {
       await delay(3000)
 

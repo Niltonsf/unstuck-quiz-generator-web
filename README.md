@@ -1,4 +1,4 @@
-# 🧠 Unstuck Quiz Generator
+# 🧠 Unstuck Quiz Generator Frontend
 
 Generate 10 quiz questions from any uploaded PDF file using AI.  
 This project features a **Next.js** frontend and a **FastAPI** backend.
@@ -139,7 +139,8 @@ yarn dev
     │       ├── pdf.svg
     │       └── uploading-quiz.svg
     ├── services/
-    │   └── question-service.ts
+    │   ├── question-service.ts
+    │   └── quiz-service.ts
     └── store/
         └── use-quiz-store.ts
 ```
