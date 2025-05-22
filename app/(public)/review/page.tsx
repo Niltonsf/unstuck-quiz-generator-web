@@ -74,6 +74,7 @@ const ReviewPage = () => {
     ) {
       decryptQuestionsMutation.mutate(undefined)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

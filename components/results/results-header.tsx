@@ -23,7 +23,9 @@ const ResultsHeader = ({ title }: ResultsHeaderProps) => {
         >
           <ChevronLeft style={{ width: 24, height: 24 }} />
           <Image priority src={PDF} alt={'pdf'} className="w-6 ml-2" />
-          <span className='max-w-96 overflow-ellipsis overflow-hidden'>{title}</span>
+          <span className="max-w-96 overflow-ellipsis overflow-hidden">
+            {title}
+          </span>
         </Button>
       }
     />

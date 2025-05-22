@@ -33,7 +33,7 @@ const QuizPage = () => {
     [currentIndex, questions],
   )
   const selectedAnswer = selectedOptions[currentQuestion?.id]
-  const isLastQuestion = currentIndex === questions.length - 1
+  const isLastQuestion = currentIndex === questions?.length - 1
   const answer = answers[currentQuestion?.id]
 
   const onGoBack = () => {
@@ -76,7 +76,7 @@ const QuizPage = () => {
         />
       ))
 
-      answerQuestion(currentQuestion.id, selectedAnswer, validatedAnswerResult)
+      answerQuestion(currentQuestion?.id, selectedAnswer, validatedAnswerResult)
 
       setIsWaiting(true)
 

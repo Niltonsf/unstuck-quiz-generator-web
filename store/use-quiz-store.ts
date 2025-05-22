@@ -1,6 +1,6 @@
 import { Answers } from '@/models/answer'
 import { Question } from '@/models/question'
-import { ValidateAnswerResponse } from '@/services/question-service'
+import { ValidateAnswerResponse } from '@/services/quiz-service'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

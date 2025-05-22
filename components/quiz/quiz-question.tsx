@@ -26,15 +26,15 @@ const QuizQuestion = ({
     <div className="flex flex-1 w-full items-center justify-center my-3 flex-col gap-6">
       <Question>
         <QuestionHeader questionNumber={currentIndex + 1}>
-          <QuestionHeaderQuestion question={currentQuestion.question} />
+          <QuestionHeaderQuestion question={currentQuestion?.question} />
         </QuestionHeader>
 
         <Separator />
 
         <QuestionOptions
           currentQuestion={currentQuestion}
-          selected={selectedOptions[currentQuestion.id]}
-          onSelect={(value) => answerQuestion(currentQuestion.id, value)}
+          selected={selectedOptions[currentQuestion?.id]}
+          onSelect={(value) => answerQuestion(currentQuestion?.id, value)}
           disabled={!!answer || isWaiting}
           answer={answer}
         />
