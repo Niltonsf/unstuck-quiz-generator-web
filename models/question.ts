@@ -7,3 +7,5 @@ export type Question = {
   questionNumber: number
   answer: string[]
 }
+
+export type QuestionStatus = 'CORRECT' | 'INCORRECT' | 'PARTIAL'

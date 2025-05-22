@@ -22,7 +22,9 @@ const ReviewQuestions = () => {
     if (isSelected) {
       if (currentAnswers.length === 1) {
         toast('You must select at least one correct answer')
+        return
       }
+
       updateQuestion(question.id, {
         answer: currentAnswers.filter((ans) => ans !== selectedAnswer),
       })

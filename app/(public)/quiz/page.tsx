@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { toast } from 'sonner'
 import { QuizHeader } from '@/components/quiz/quiz-header'
-import { handleError } from '@/lib/error-handler'
+import { handleError } from '@/utils/error-handler'
 import ToastProgress from '@/components/ui/toast-progress'
 import QuizQuestion from '@/components/quiz/quiz-question'
 import { QuizService } from '@/services/quiz-service'
@@ -20,7 +20,7 @@ const QuizPage = () => {
     currentIndex,
     next,
     answers,
-    selectedOptions,
+    selectedAnswers,
     answerQuestion,
     previous,
     resetQuiz,
@@ -32,9 +32,9 @@ const QuizPage = () => {
     () => questions[currentIndex],
     [currentIndex, questions],
   )
-  const selectedAnswer = selectedOptions[currentQuestion?.id]
+  const myAnswers = selectedAnswers[currentQuestion?.id]
   const isLastQuestion = currentIndex === questions?.length - 1
-  const answer = answers[currentQuestion?.id]
+  const answered = answers[currentQuestion?.id]
 
   const onGoBack = () => {
     resetQuiz()
@@ -47,12 +47,12 @@ const QuizPage = () => {
         return
       }
 
-      if (!selectedAnswer) {
+      if (myAnswers?.length === 0 || !myAnswers) {
         toast('Please select an answer before continuing.')
         return
       }
 
-      if (answer) {
+      if (answered) {
         next()
 
         if (isLastQuestion) {
@@ -64,7 +64,7 @@ const QuizPage = () => {
 
       const validatedAnswerResult = await QuizService.validateAnswer(
         currentQuestion,
-        selectedAnswer,
+        myAnswers,
       )
 
       toast.custom((toastId) => (
@@ -76,7 +76,7 @@ const QuizPage = () => {
         />
       ))
 
-      answerQuestion(currentQuestion?.id, selectedAnswer, validatedAnswerResult)
+      answerQuestion(currentQuestion?.id, myAnswers, validatedAnswerResult)
 
       setIsWaiting(true)
 
@@ -104,7 +104,7 @@ const QuizPage = () => {
           <QuizQuestion
             currentQuestion={currentQuestion}
             isWaiting={isWaiting}
-            answer={answer}
+            answered={answered}
           />
 
           <div className="flex w-full items-center justify-between max-w-3xl">

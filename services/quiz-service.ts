@@ -19,7 +19,7 @@ export class QuizService {
 
   static async validateAnswer(
     question: Question,
-    userAnswer: string,
+    userAnswer: string[],
   ): Promise<ValidateAnswerResponse> {
     const response = await http.post('/quiz/validate-answer', {
       question,

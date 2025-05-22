@@ -2,24 +2,17 @@ import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useQuizStore } from '@/store/use-quiz-store'
 import Question from '../ui/question/question'
-import QuestionAnsweredOptions from '../ui/question/question-answered-options'
 import QuestionHeader from '../ui/question/question-header'
 import { QuestionHeaderQuestion } from '../ui/question/question-header-question'
 import { Collapsible, CollapsibleContent } from '../ui/collapsible'
 import { Separator } from '../ui/separator'
+import QuestionOptions from '../ui/question/question-options'
+import { getQuestionStatus } from '@/utils/question'
 
 const ResultsQuestions = () => {
   const { answers, questions } = useQuizStore()
 
   const [openStates, setOpenStates] = useState(Array(10).fill(false))
-
-  const groupedQuestions = questions.map((question) => ({
-    question: question.question,
-    options: question.options,
-    isCorrect: answers[question.id].isCorrect,
-    correctAnswers: answers[question.id].correctAnswers,
-    selectedAnswer: answers[question.id].answer,
-  }))
 
   const toggleOpenQuestion = (index: number) => {
     setOpenStates((prev) =>
@@ -29,8 +22,12 @@ const ResultsQuestions = () => {
 
   return (
     <>
-      {groupedQuestions.map((question, index) => {
+      {questions.map((question, index) => {
         const questionNumber = index + 1
+        const isCorrect = answers[question?.id].isCorrect
+        const correctAnswers = answers[question?.id].correctAnswers
+        const userAnswers = answers[question?.id].answer
+        const status = getQuestionStatus(userAnswers, correctAnswers)
 
         return (
           <Collapsible
@@ -42,10 +39,7 @@ const ResultsQuestions = () => {
               className="cursor-pointer"
               onClick={() => toggleOpenQuestion(index)}
             >
-              <QuestionHeader
-                questionNumber={questionNumber}
-                isCorrect={question.isCorrect}
-              >
+              <QuestionHeader questionNumber={questionNumber} status={status}>
                 <QuestionHeaderQuestion question={question.question} />
               </QuestionHeader>
 
@@ -56,7 +50,17 @@ const ResultsQuestions = () => {
               >
                 <Separator className="mb-5" />
 
-                <QuestionAnsweredOptions question={question} />
+                <QuestionOptions
+                  key={'da' + index}
+                  currentQuestion={question}
+                  disabled={true}
+                  selected={answers[question?.id].answer}
+                  answered={{
+                    isCorrect,
+                    correctAnswers,
+                    answer: userAnswers,
+                  }}
+                />
               </CollapsibleContent>
             </Question>
           </Collapsible>
