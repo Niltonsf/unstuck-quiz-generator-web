@@ -1,36 +1,168 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 Unstuck Quiz Generator
 
-## Getting Started
+Generate 10 quiz questions from any uploaded PDF file using AI.  
+This project features a **Next.js** frontend and a **FastAPI** backend.
 
-First, run the development server:
+## 🛠️ Features
+- Upload a PDF and get 10 AI-generated questions from its content
+- Seamless integration between the frontend (Next.js) and backend (FastAPI)
+- Scalable architecture for future improvements like authentication, saving quizzes, etc.
+
+## 📦 Tech Stack
+- **Frontend**: [Next.js](https://nextjs.org/)
+- **Queries**: [ReactQuery](https://tanstack.com/query/latest/docs/framework/react/overview)
+- **State Managment**: [Zustand](https://zustand-demo.pmnd.rs/)
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Niltonsf/unstuck-quiz-generator-web
+cd unstuck-quiz-generator-web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> ⚠️ **Note:** This project requires the [backend](https://github.com/Niltonsf/unstuck-quiz-generator-backend) to be running for full functionality. Make sure the backend server is up before starting the frontend.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### 2.1 Create the Environment File (`.env`)
+```
+touch .env
+```
 
-## Learn More
+#### 2.2 Follow .env.example
+```
+NEXT_PUBLIC_BASE_URL=
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### 2.3 Install packages
+```
+yarn
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Run project
+```
+yarn dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> The frontend will be available at `http://localhost:3000`.
 
-## Deploy on Vercel
+## 📂 Project Structure
+```
+.
+└── unstuck-quiz-generator/
+    ├── └── app/
+    │   ├── (public)/
+    │   │   ├── (home)/
+    │   │   │   └── page.tsx
+    │   │   ├── quiz/
+    │   │   │   └── page.tsx                  
+    │   │   ├── results/
+    │   │   │   └── page.tsx
+    │   │   └── review/
+    │   │       └── page.tsx
+    │   ├── favicon.ico
+    │   ├── global.css
+    │   └── layout.tsx
+    ├── components/
+    │   ├── home/
+    │   │   └── home-drag-and-drop-card.tsx
+    │   ├── layout/
+    │   │   ├── header.tsx
+    │   │   └── loading-overlay.tsx
+    │   ├── quiz/
+    │   │   ├── quiz.correct-answer.tsx
+    │   │   ├── quiz-header.tsx
+    │   │   └── quiz-question.tsx
+    │   ├── results/
+    │   │   ├── results-congratulation-card.tsx
+    │   │   ├── results-header.tsx
+    │   │   └── results-questions.tsx
+    │   ├── review/
+    │   │   ├── review-add-name-dialog.tsx
+    │   │   ├── review-header.tsx
+    │   │   ├── review-no-questions.tsx
+    │   │   ├── review-questions-skeleton.tsx
+    │   │   └── review-questions.tsx
+    │   └── ui/
+    │       ├── questions/
+    │       │   ├── question-answered-options.tsx
+    │       │   ├── question-correct-badge.tsx
+    │       │   ├── question-header-question.tsx
+    │       │   ├── question-header.tsx
+    │       │   ├── question-options.tsx
+    │       │   ├── question-review-option.tsx
+    │       │   └── questions.tsx
+    │       ├── score-bar/
+    │       │   ├── score-bar-legend.tsx
+    │       │   └── score-bar.tsx
+    │       ├── alert.tsx
+    │       ├── button.tsx
+    │       ├── card.tsx
+    │       ├── collapsible.tsx
+    │       ├── dialog.tsx
+    │       ├── footer-floating-action-button.tsx
+    │       ├── form.tsx
+    │       ├── input.tsx
+    │       ├── logo-title.tsx
+    │       ├── progress.tsx
+    │       ├── radio-group.tsx
+    │       ├── separator.tsx
+    │       ├── skeleton.tsx
+    │       ├── sonner.tsx
+    │       ├── toast-progress.tsx
+    │       ├── tooltip.tsx
+    │       └── upgrade-dialog.tsx
+    ├── lib/
+    │   ├── axios.ts
+    │   ├── error-handler.ts
+    │   ├── string.ts
+    │   ├── time.ts
+    │   └── utils.ts
+    ├── models/
+    │   ├── answer.ts
+    │   ├── option.ts
+    │   └── question.ts
+    ├── providers/
+    │   └── query-client-provider.tsx
+    ├── assets/
+    │   ├── images/
+    │   │   └── me.jpeg
+    │   └── svg/
+    │       ├── home/
+    │       │   └── folder-with-pdfs.svg
+    │       ├── results/
+    │       │   └── party-symbols.svg
+    │       ├── correct-answer.svg
+    │       ├── logo.svg
+    │       ├── pdf.svg
+    │       └── uploading-quiz.svg
+    ├── services/
+    │   └── question-service.ts
+    └── store/
+        └── use-quiz-store.ts
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📌 Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Make sure CORS is properly configured in the FastAPI backend to allow requests from `localhost:3000`.
+
+## 🧪 Example Usage
+
+1. Start the backend and frontend servers.
+2. Visit `http://localhost:3000`
+3. Upload your PDF.
+4. Get a list of 10 quiz questions based on its content.
+
+## 📃 License
+
+This project is licensed under the **Nilton Schumacher F Public License**, which means:
+
+- You can use it.
+- You can break it.
+- You can improve it.
+- If it explodes, it's your fault.
+- If it works, it's probably accidental genius.
+
+Made with ❤️ by [Nilton Schumacher F](https://www.linkedin.com/in/nilton-schumacher-filho/). Feel free to connect!
