@@ -6,9 +6,37 @@ import { QuestionHeaderQuestion } from '../ui/question/question-header-question'
 import QuestionReviewOption from '../ui/question/question-review-option'
 import { Question as QuestionType } from '@/models/question'
 import { useQuizStore } from '@/store/use-quiz-store'
+import { toast } from 'sonner'
 
 const ReviewQuestions = () => {
   const { questions, updateQuestion } = useQuizStore()
+
+  const handleToggleAnswerSelection = (
+    question: QuestionType,
+    selectedAnswer: string,
+  ) => {
+    const currentAnswers = question.answer ?? []
+
+    const isSelected = currentAnswers.includes(selectedAnswer)
+
+    if (isSelected) {
+      if (currentAnswers.length === 1) {
+        toast('You must select at least one correct answer')
+      }
+      updateQuestion(question.id, {
+        answer: currentAnswers.filter((ans) => ans !== selectedAnswer),
+      })
+    } else {
+      if (currentAnswers.length >= 3) {
+        toast('You can only select up to 3 correct answers')
+        return
+      }
+
+      updateQuestion(question.id, {
+        answer: [...currentAnswers, selectedAnswer],
+      })
+    }
+  }
 
   const onOptionTextUpdate = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -52,11 +80,9 @@ const ReviewQuestions = () => {
                 optionNumber={optionIndex + 1}
                 answer={option.label}
                 isCorrectAnswer={question?.answer?.includes(option.value)}
-                onDoubleClick={() => {
-                  updateQuestion(question.id, {
-                    answer: [option.value],
-                  })
-                }}
+                onDoubleClick={() =>
+                  handleToggleAnswerSelection(question, option.value)
+                }
                 onTextChange={(e) =>
                   onOptionTextUpdate(e, question, optionIndex)
                 }
