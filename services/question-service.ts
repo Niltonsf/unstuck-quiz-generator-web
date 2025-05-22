@@ -11,6 +11,10 @@ export interface ValidateAnswerResponse {
   correctAnswers: string[]
 }
 
+type DecryptQuizResponse = Question[]
+
+type CreateQuizResponse = Question[]
+
 export class QuestionService {
   static async generateQuestions(
     pdf: File,
@@ -28,7 +32,7 @@ export class QuestionService {
     return response.data
   }
 
-  static async createQuiz(questions: Question[]): Promise<Question[]> {
+  static async createQuiz(questions: Question[]): Promise<CreateQuizResponse> {
     const response = await http.post('/create-quiz', {
       data: questions,
     })
@@ -36,7 +40,9 @@ export class QuestionService {
     return response.data
   }
 
-  static async decryptQuiz(questions: Question[]): Promise<Question[]> {
+  static async decryptQuiz(
+    questions: Question[],
+  ): Promise<DecryptQuizResponse> {
     const response = await http.post('/decrypt-quiz', {
       data: questions,
     })

@@ -1,18 +1,14 @@
 import { cn } from '@/lib/utils'
 import React, { HTMLAttributes } from 'react'
-import { DualProgressBarLegend } from './dual-progress-bar-legend'
+import { ScoreBarLegend } from './score-bar-legend'
 
-interface DualProgressBarProps {
+interface ScoreBarProps {
   correct: number
   total: number
   className?: HTMLAttributes<HTMLDivElement>['className']
 }
 
-export const DualProgressBar = ({
-  correct,
-  total,
-  className,
-}: DualProgressBarProps) => {
+export const ScoreBar = ({ correct, total, className }: ScoreBarProps) => {
   const correctPercentage = (correct / total) * 100
   const incorrectPercentage = 100 - correctPercentage
 
@@ -40,12 +36,9 @@ export const DualProgressBar = ({
       </div>
 
       <div className="flex items-center gap-5 mt-7 self-center sm:flex-row flex-col">
-        <DualProgressBarLegend
-          color="bg-green-muted"
-          label="Answered Correctly"
-        />
+        <ScoreBarLegend color="bg-green-muted" label="Answered Correctly" />
 
-        <DualProgressBarLegend color="bg-red-muted" label="Missed answers" />
+        <ScoreBarLegend color="bg-red-muted" label="Missed answers" />
       </div>
     </div>
   )

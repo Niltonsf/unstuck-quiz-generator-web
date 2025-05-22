@@ -28,7 +28,7 @@ const ReviewPage = () => {
     useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
 
-  const decryptMutation = useMutation({
+  const decryptQuestionsMutation = useMutation({
     mutationFn: () => QuestionService.decryptQuiz(questions),
     onSuccess: async (data) => {
       await delay(1000)
@@ -68,10 +68,10 @@ const ReviewPage = () => {
 
     if (
       hasEncryptedAnswer &&
-      !decryptMutation.isPending &&
-      !decryptMutation.isSuccess
+      !decryptQuestionsMutation.isPending &&
+      !decryptQuestionsMutation.isSuccess
     ) {
-      decryptMutation.mutate(undefined)
+      decryptQuestionsMutation.mutate(undefined)
     }
   }, [])
 
@@ -119,7 +119,7 @@ const ReviewPage = () => {
                 </AlertDescription>
               </Alert>
 
-              {decryptMutation.isPending ? (
+              {decryptQuestionsMutation.isPending ? (
                 <ReviewQuestionsSkeleton />
               ) : !questions ? (
                 <ReviewNoQuestions />
@@ -136,7 +136,7 @@ const ReviewPage = () => {
               disabled:
                 createQuizMutation.isPending ||
                 !questions ||
-                decryptMutation.isPending,
+                decryptQuestionsMutation.isPending,
             }}
           />
 

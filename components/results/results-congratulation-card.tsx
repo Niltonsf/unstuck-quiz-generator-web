@@ -4,7 +4,7 @@ import PartySymbols from '@/assets/svg/results/party-symbols.svg'
 import Image from 'next/image'
 import { Button } from '../ui/button'
 import { Share } from 'lucide-react'
-import { DualProgressBar } from '../ui/dual-progress-bar/dual-progress-bar'
+import { ScoreBar } from '../ui/score-bar/score-bar'
 
 interface ResultsCongratulationCardProps {
   totalCorrectAnswers: number
@@ -64,11 +64,7 @@ const ResultsCongratulationCard = ({
           {totalCorrectAnswers}/10
         </span>
 
-        <DualProgressBar
-          correct={totalCorrectAnswers}
-          total={10}
-          className="mt-5"
-        />
+        <ScoreBar correct={totalCorrectAnswers} total={10} className="mt-5" />
       </div>
 
       <Button className="h-10 w-40 mt-7" onClick={shareToLinkedIn}>
