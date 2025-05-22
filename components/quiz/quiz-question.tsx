@@ -22,16 +22,16 @@ const QuizQuestion = ({
 }: QuizQuestionProps) => {
   const { currentIndex, selectedAnswers, handleSelectAnswer } = useQuizStore()
 
+  const isMultipleChoice = currentQuestion?.answer?.length > 1
+  const questionNumber = currentIndex + 1
+
   return (
     <div className="flex flex-1 w-full items-center justify-center my-3 flex-col gap-6">
       <Question>
-        <QuestionHeader questionNumber={currentIndex + 1}>
-          {currentQuestion?.answer?.length > 1 && (
-            <div className="text-sm text-blue-600 font-medium">
-              This is a multiple choice question. Select all that apply.
-            </div>
-          )}
-
+        <QuestionHeader
+          questionNumber={questionNumber}
+          isMultipleChoice={isMultipleChoice}
+        >
           <QuestionHeaderQuestion question={currentQuestion?.question} />
         </QuestionHeader>
 

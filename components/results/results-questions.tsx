@@ -7,6 +7,7 @@ import { QuestionHeaderQuestion } from '../ui/question/question-header-question'
 import { Collapsible, CollapsibleContent } from '../ui/collapsible'
 import { Separator } from '../ui/separator'
 import QuestionOptions from '../ui/question/question-options'
+import { QuestionStatus } from '@/models/question'
 
 const ResultsQuestions = () => {
   const { answers, questions } = useQuizStore()
@@ -24,6 +25,19 @@ const ResultsQuestions = () => {
       {questions.map((question, index) => {
         const questionNumber = index + 1
         const isCorrect = answers[question?.id].isCorrect
+        const correctAnswers = answers[question?.id].correctAnswers
+        const userAnswers = answers[question?.id].answer
+        let status: QuestionStatus = isCorrect ? 'CORRECT' : 'INCORRECT'
+
+        if (correctAnswers.length > 1 && !isCorrect) {
+          const hasAtLeastOneCorrect = userAnswers.some((ans) =>
+            correctAnswers.includes(ans),
+          )
+
+          if (hasAtLeastOneCorrect) {
+            status = 'PARTIAL'
+          }
+        }
 
         return (
           <Collapsible
@@ -35,10 +49,7 @@ const ResultsQuestions = () => {
               className="cursor-pointer"
               onClick={() => toggleOpenQuestion(index)}
             >
-              <QuestionHeader
-                questionNumber={questionNumber}
-                isCorrect={isCorrect}
-              >
+              <QuestionHeader questionNumber={questionNumber} status={status}>
                 <QuestionHeaderQuestion question={question.question} />
               </QuestionHeader>
 
@@ -56,8 +67,8 @@ const ResultsQuestions = () => {
                   selected={answers[question?.id].answer}
                   answered={{
                     isCorrect,
-                    correctAnswers: answers[question?.id].correctAnswers,
-                    answer: answers[question?.id].answer,
+                    correctAnswers,
+                    answer: userAnswers,
                   }}
                 />
               </CollapsibleContent>

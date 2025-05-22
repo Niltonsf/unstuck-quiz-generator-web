@@ -16,7 +16,7 @@ const ResultsCongratulationCard = ({
   const [name, setName] = useState('')
 
   const shareToLinkedIn = () => {
-    const shareText = `I scored ${totalCorrectAnswers}/10 on this quiz generator! 🎉 Try it yourself https://niltonsf.dev/`
+    const shareText = `I scored ${totalCorrectAnswers}/10 on this quiz generator! 🎉 Try it yourself https://www.unstuck-quiz.com`
     const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${shareText}`
 
     window.open(linkedInUrl, '_blank', 'noopener,noreferrer')
