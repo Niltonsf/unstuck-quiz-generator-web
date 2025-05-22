@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { QuestionBadge } from './question-badge'
 
 interface QuestionReviewOptionProps {
@@ -9,6 +9,8 @@ interface QuestionReviewOptionProps {
   isCorrectAnswer?: boolean
 }
 
+const LONG_PRESS_DURATION = 500
+
 const QuestionReviewOption = ({
   optionNumber,
   answer,
@@ -16,14 +18,36 @@ const QuestionReviewOption = ({
   onDoubleClick,
   isCorrectAnswer,
 }: QuestionReviewOptionProps) => {
-  return (
-    <div className="p-0 flex sm:items-center items-start gap-2.5 sm:flex-row flex-col">
-      <p className="text-nowrap text-sm font-medium">Option {optionNumber}:</p>
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-      <div
-        onDoubleClick={onDoubleClick}
-        className="relative flex bg-input-background border-none rounded-md shadow-none focus-within:bg-primary/8 focus-within:ring-primary/20 caret-primary items-center h-[51px] w-full"
-      >
+  const handlePressStart = () => {
+    timeoutRef.current = setTimeout(() => {
+      onDoubleClick()
+    }, LONG_PRESS_DURATION)
+  }
+
+  const handlePressEnd = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+  }
+
+  return (
+    <div
+      className="p-0 flex sm:items-center items-start gap-2.5 sm:flex-row flex-col"
+      onDoubleClick={onDoubleClick}
+      onTouchStart={handlePressStart}
+      onTouchEnd={handlePressEnd}
+      onTouchCancel={handlePressEnd}
+      onMouseDown={handlePressStart}
+      onMouseUp={handlePressEnd}
+      onMouseLeave={handlePressEnd}
+    >
+      <p className="text-nowrap text-sm font-medium cursor-pointer">
+        Option {optionNumber}:
+      </p>
+
+      <div className="relative flex bg-input-background border-none rounded-md shadow-none focus-within:bg-primary/8 focus-within:ring-primary/20 caret-primary items-center h-[51px] w-full">
         <input
           type="text"
           value={answer}
