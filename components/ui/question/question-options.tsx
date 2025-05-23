@@ -21,20 +21,16 @@ const QuestionOptions = ({
   answered,
 }: QuestionOptionsProps) => {
   const hasAnswered = !!answered
+  const isUserCorrect = answered?.isCorrect
 
   return (
     <div className="flex flex-col gap-2">
       {currentQuestion?.options?.map((option, index) => {
         const isOptionCorrect = answered?.correctAnswers.includes(option.value)
         const isUserSelection = selected?.includes(option.value)
-        const isUserCorrect = answered?.isCorrect
 
         const isCorrectButNotSelected =
-          hasAnswered &&
-          !isUserSelection &&
-          answered.correctAnswers.includes(option.value) &&
-          answered.correctAnswers.length > 1 &&
-          !answered.isCorrect
+          hasAnswered && !isUserSelection && isOptionCorrect && !isUserCorrect
 
         const isCorrect = hasAnswered && isOptionCorrect
         const isIncorrect =
