@@ -72,7 +72,7 @@ const QuizPage = () => {
           interval={1000}
           seconds={3}
           toastId={toastId}
-          title="Next question in"
+          title={isLastQuestion ? 'Results in' : 'Next question in'}
         />
       ))
 
