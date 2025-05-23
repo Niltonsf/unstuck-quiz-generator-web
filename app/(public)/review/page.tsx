@@ -29,6 +29,8 @@ const ReviewPage = () => {
     useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
 
+  const noQuestions = questions?.length === 0
+
   const decryptQuestionsMutation = useMutation({
     mutationFn: () => QuestionService.decryptQuiz(questions),
     onSuccess: async (data) => {
@@ -124,7 +126,7 @@ const ReviewPage = () => {
 
               {decryptQuestionsMutation.isPending ? (
                 <ReviewQuestionsSkeleton />
-              ) : !questions ? (
+              ) : noQuestions ? (
                 <ReviewNoQuestions />
               ) : (
                 <ReviewQuestions />
@@ -138,7 +140,7 @@ const ReviewPage = () => {
             buttonProps={{
               disabled:
                 createQuizMutation.isPending ||
-                !questions ||
+                noQuestions ||
                 decryptQuestionsMutation.isPending,
             }}
           />
