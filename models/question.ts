@@ -5,7 +5,10 @@ export type Question = {
   question: string
   options: Option[]
   questionNumber: number
-  answer: string[]
+  answers: string[]
+  userAnswers?: string[]
+  isCorrect?: boolean
+  correctAnswersDescrypted?: string[]
 }
 
 export type QuestionStatus = 'CORRECT' | 'INCORRECT' | 'PARTIAL'

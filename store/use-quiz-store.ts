@@ -1,16 +1,17 @@
 import { Answers } from '@/models/answer'
 import { Question } from '@/models/question'
-import { ValidateAnswerResponse } from '@/services/quiz-service'
+import { ValidateAnswerResponse } from '@/services/question-service'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type QuizState = {
   currentIndex: number
+  id: string
+  setId: (id: string) => void
   title: string
   setTitle: (title: string) => void
   answerQuestion: (
     questionId: string,
-    answers: string[],
     validatedAnswerResponse?: ValidateAnswerResponse,
   ) => void
   handleSelectAnswer: (questionId: string, answer: string) => void
@@ -31,6 +32,7 @@ type QuizState = {
 export const useQuizStore = create<QuizState>()(
   persist(
     (set, get) => ({
+      id: '',
       title: '',
       currentIndex: 0,
       questions: [],
@@ -38,6 +40,9 @@ export const useQuizStore = create<QuizState>()(
       selectedAnswers: {},
       setTitle: (title) => {
         set({ title })
+      },
+      setId: (id) => {
+        set({ id })
       },
       setQuestions: (questions) => {
         set({ questions })
@@ -47,7 +52,7 @@ export const useQuizStore = create<QuizState>()(
 
         const currentSelected = selectedAnswers[questionId] || []
         const question = questions.find((q) => q.id === questionId)
-        const questionAnswerLength = question?.answer?.length || 0
+        const questionAnswerLength = question?.answers?.length || 0
         const isMultipleChoice = questionAnswerLength > 1
 
         let updatedAnswersArray: string[]
@@ -69,33 +74,29 @@ export const useQuizStore = create<QuizState>()(
 
         set({
           selectedAnswers: updatedSelectedOptions,
-          // answers: updatedAnswers,
         })
       },
       answerQuestion: (
         questionId: string,
-        selectedAnswers: string[],
         validatedAnswerResponse?: ValidateAnswerResponse,
       ) => {
-        const { answers } = get()
+        const { questions } = get()
 
-        const updatedAnswers = validatedAnswerResponse
-          ? {
-              ...answers,
-              [questionId]: {
-                answer: selectedAnswers,
-                isCorrect: validatedAnswerResponse.isCorrect,
-                correctAnswers: validatedAnswerResponse.correctAnswers,
-              },
+        const updatedQuestions = questions.map((question) => {
+          if (question.id === questionId && validatedAnswerResponse) {
+            return {
+              ...question,
+              isCorrect: validatedAnswerResponse.isCorrect,
+              userAnswers: validatedAnswerResponse.userAnswers,
+              answers: validatedAnswerResponse.correctAnswersDescrypted,
             }
-          : answers
+          }
+
+          return question
+        })
 
         set({
-          selectedAnswers: {
-            ...get().selectedAnswers,
-            [questionId]: selectedAnswers,
-          },
-          answers: updatedAnswers,
+          questions: updatedQuestions,
         })
       },
       updateQuestion: (
@@ -104,11 +105,11 @@ export const useQuizStore = create<QuizState>()(
       ) => {
         const { questions } = get()
 
-        const updatedQuestions = questions.map((question) =>
-          question.id === questionId
+        const updatedQuestions = questions.map((question) => {
+          return question.id === questionId
             ? { ...question, ...updatedQuestion }
-            : question,
-        )
+            : question
+        })
 
         set(() => ({
           questions: updatedQuestions,
@@ -135,6 +136,7 @@ export const useQuizStore = create<QuizState>()(
       },
       reset: () => {
         set({
+          id: '',
           title: '',
           currentIndex: 0,
           questions: [],
@@ -146,6 +148,7 @@ export const useQuizStore = create<QuizState>()(
     {
       name: '@unstuckquiz:quiz',
       partialize: (state) => ({
+        id: state.id,
         title: state.title,
         currentIndex: state.currentIndex,
         answers: state.answers,

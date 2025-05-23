@@ -6,23 +6,17 @@ import QuestionOptions from '../ui/question/question-options'
 import { QuizCorrectAnswer } from './quiz-correct-answer'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { Question as QuestionType } from '@/models/question'
-import { Answer } from '@/models/answer'
 import { Separator } from '../ui/separator'
 
 interface QuizQuestionProps {
   currentQuestion: QuestionType
   isWaiting: boolean
-  answered: Answer
 }
 
-const QuizQuestion = ({
-  currentQuestion,
-  isWaiting,
-  answered,
-}: QuizQuestionProps) => {
+const QuizQuestion = ({ currentQuestion, isWaiting }: QuizQuestionProps) => {
   const { currentIndex, selectedAnswers, handleSelectAnswer } = useQuizStore()
 
-  const isMultipleChoice = currentQuestion?.answer?.length > 1
+  const isMultipleChoice = currentQuestion?.answers?.length > 1
   const questionNumber = currentIndex + 1
 
   return (
@@ -41,12 +35,12 @@ const QuizQuestion = ({
           currentQuestion={currentQuestion}
           selected={selectedAnswers[currentQuestion?.id] || []}
           onSelect={(value) => handleSelectAnswer(currentQuestion.id, value)}
-          disabled={!!answered || isWaiting}
-          answered={answered}
+          disabled={!!currentQuestion.userAnswers || isWaiting}
         />
       </Question>
 
-      {(isWaiting || !!answered) && answered.isCorrect && <QuizCorrectAnswer />}
+      {(isWaiting || !!currentQuestion.userAnswers) &&
+        currentQuestion.isCorrect && <QuizCorrectAnswer />}
     </div>
   )
 }

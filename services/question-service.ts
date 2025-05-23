@@ -2,11 +2,16 @@ import http from '@/lib/axios'
 import { Question } from '@/models/question'
 
 export interface GenerateQuestionsResponse {
+  id: string
   title: string
   questions: Question[]
 }
 
-type DecryptQuizResponse = Question[]
+export interface ValidateAnswerResponse {
+  isCorrect: boolean
+  correctAnswersDescrypted: string[]
+  userAnswers: string[]
+}
 
 export class QuestionService {
   static async generateQuestions(
@@ -25,11 +30,17 @@ export class QuestionService {
     return response.data
   }
 
-  static async decryptQuiz(
-    questions: Question[],
-  ): Promise<DecryptQuizResponse> {
-    const response = await http.post('/questions/decrypt', {
-      data: questions,
+  static async answer(
+    quizId: string,
+    questionId: string,
+    question: Question,
+    userAnswer: string[],
+  ): Promise<ValidateAnswerResponse> {
+    const response = await http.post('/questions/answer', {
+      id: quizId,
+      questionId,
+      question,
+      userAnswer,
     })
 
     return response.data

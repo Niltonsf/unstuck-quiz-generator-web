@@ -3,12 +3,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { Question } from '@/models/question'
-import { Answer } from '@/models/answer'
 
 interface QuestionOptionsProps {
   currentQuestion: Question
   disabled: boolean
-  answered: Answer
   onSelect?: (value: string) => void
   selected?: string[]
 }
@@ -18,27 +16,24 @@ const QuestionOptions = ({
   onSelect,
   selected,
   disabled,
-  answered,
 }: QuestionOptionsProps) => {
-  const hasAnswered = !!answered
+  const correctAnswers = currentQuestion?.answers || []
+  const hasAnswered = !!currentQuestion?.userAnswers
 
   return (
     <div className="flex flex-col gap-2">
       {currentQuestion?.options?.map((option, index) => {
-        const isOptionCorrect = answered?.correctAnswers.includes(option.value)
+        const isOptionCorrect = correctAnswers?.includes(option.value)
         const isUserSelection = selected?.includes(option.value)
-        const isUserCorrect = answered?.isCorrect
 
         const isCorrectButNotSelected =
-          hasAnswered &&
           !isUserSelection &&
-          answered.correctAnswers.includes(option.value) &&
-          answered.correctAnswers.length > 1 &&
-          !answered.isCorrect
+          correctAnswers?.includes(option.value) &&
+          correctAnswers?.length > 1
 
-        const isCorrect = hasAnswered && isOptionCorrect
-        const isIncorrect =
-          hasAnswered && !isUserCorrect && isUserSelection && !isOptionCorrect
+        const isCorrectAnswer = hasAnswered && isOptionCorrect
+        const isIncorrectAnswer =
+          hasAnswered && isUserSelection && !isOptionCorrect
 
         return (
           <div
@@ -51,8 +46,8 @@ const QuestionOptions = ({
               !disabled && 'hover:bg-primary/10 pointer-events-auto',
               disabled && 'cursor-not-allowed pointer-events-none',
 
-              isCorrect && 'bg-green-100 border-green-500',
-              isIncorrect && 'bg-red-100 border-red-500',
+              isCorrectAnswer && 'bg-green-100 border-green-500',
+              isIncorrectAnswer && 'bg-red-100 border-red-500',
             )}
           >
             <Checkbox
@@ -60,8 +55,8 @@ const QuestionOptions = ({
               checked={isUserSelection}
               className={cn(
                 'h-4 w-4 rounded-md border-3 border-gray-300 bg-transparent data-[state=checked]:border-primary data-[state=checked]:bg-transparent',
-                isCorrect && 'border-green-500!',
-                isIncorrect && 'border-red-500!',
+                isCorrectAnswer && 'border-green-500!',
+                isIncorrectAnswer && 'border-red-500!',
                 isCorrectButNotSelected && 'border-gray-300!',
               )}
             />
@@ -71,8 +66,8 @@ const QuestionOptions = ({
               className={cn(
                 !disabled && 'cursor-pointer',
                 disabled && 'cursor-not-allowed',
-                isCorrect && 'text-green-600',
-                isIncorrect && 'text-red-600',
+                isCorrectAnswer && 'text-green-600',
+                isIncorrectAnswer && 'text-red-600',
                 isCorrectButNotSelected && 'text-black',
               )}
             >

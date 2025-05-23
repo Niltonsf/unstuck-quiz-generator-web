@@ -13,15 +13,15 @@ import { AnimatePresence } from 'framer-motion'
 
 const HomePage = () => {
   const router = useRouter()
-  const { setQuestions, setTitle, reset } = useQuizStore()
+  const { setQuestions, setTitle, setId, reset } = useQuizStore()
 
   const [animationComplete, setAnimationComplete] = useState(false)
 
   const submitFileMuttation = useMutation({
     mutationFn: (file: File) => QuestionService.generateQuestions(file),
     onSuccess: async (data) => {
+      setId(data.id)
       setQuestions(data.questions)
-
       setTitle(data.title)
     },
     onError: (error) => {

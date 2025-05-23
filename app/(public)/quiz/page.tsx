@@ -10,16 +10,16 @@ import { QuizHeader } from '@/components/quiz/quiz-header'
 import { handleError } from '@/utils/error-handler'
 import ToastProgress from '@/components/ui/toast-progress'
 import QuizQuestion from '@/components/quiz/quiz-question'
-import { QuizService } from '@/services/quiz-service'
+import { QuestionService } from '@/services/question-service'
 
 const QuizPage = () => {
   const router = useRouter()
   const {
+    id,
     title,
     questions,
     currentIndex,
     next,
-    answers,
     selectedAnswers,
     answerQuestion,
     previous,
@@ -34,7 +34,14 @@ const QuizPage = () => {
   )
   const myAnswers = selectedAnswers[currentQuestion?.id]
   const isLastQuestion = currentIndex === questions?.length - 1
-  const answered = answers[currentQuestion?.id]
+  const answered =
+    !!currentQuestion?.isCorrect || currentQuestion?.userAnswers?.length
+
+  console.log(
+    'page: ',
+    !!currentQuestion?.userAnswers?.length,
+    !myAnswers?.length,
+  )
 
   const onGoBack = () => {
     resetQuiz()
@@ -47,7 +54,7 @@ const QuizPage = () => {
         return
       }
 
-      if (myAnswers?.length === 0 || !myAnswers) {
+      if (!myAnswers?.length && !answered) {
         toast('Please select an answer before continuing.')
         return
       }
@@ -62,7 +69,9 @@ const QuizPage = () => {
         return
       }
 
-      const validatedAnswerResult = await QuizService.validateAnswer(
+      const validatedAnswerResult = await QuestionService.answer(
+        id,
+        currentQuestion.id,
         currentQuestion,
         myAnswers,
       )
@@ -76,7 +85,7 @@ const QuizPage = () => {
         />
       ))
 
-      answerQuestion(currentQuestion?.id, myAnswers, validatedAnswerResult)
+      answerQuestion(currentQuestion?.id, validatedAnswerResult)
 
       setIsWaiting(true)
 
@@ -104,7 +113,6 @@ const QuizPage = () => {
           <QuizQuestion
             currentQuestion={currentQuestion}
             isWaiting={isWaiting}
-            answered={answered}
           />
 
           <div className="flex w-full items-center justify-between max-w-3xl">

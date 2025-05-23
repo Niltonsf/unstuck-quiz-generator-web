@@ -7,7 +7,6 @@ import LoadingOverlay from '@/components/layout/loading-overlay'
 import { ReviewHeader } from '@/components/review/review-header'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { handleError } from '@/utils/error-handler'
-import { QuestionService } from '@/services/question-service'
 import { useMutation } from '@tanstack/react-query'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Info } from 'lucide-react'
@@ -23,14 +22,14 @@ import { QuizService } from '@/services/quiz-service'
 
 const ReviewPage = () => {
   const router = useRouter()
-  const { questions, setQuestions } = useQuizStore()
+  const { id, questions, setQuestions } = useQuizStore()
 
   const [isReviewAddNameDialogOpen, setIsReviewAddNameDialogOpen] =
     useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
 
   const decryptQuestionsMutation = useMutation({
-    mutationFn: () => QuestionService.decryptQuiz(questions),
+    mutationFn: () => QuizService.decryptQuiz(questions),
     onSuccess: async (data) => {
       await delay(1000)
 
@@ -40,7 +39,7 @@ const ReviewPage = () => {
   })
 
   const createQuizMutation = useMutation({
-    mutationFn: () => QuizService.createQuiz(questions),
+    mutationFn: () => QuizService.create(id, questions),
     onSuccess: async (data) => {
       await delay(3000)
 
@@ -63,8 +62,8 @@ const ReviewPage = () => {
   }
 
   useEffect(() => {
-    const hasEncryptedAnswer = questions.some((q) =>
-      q.answer.some((a) => isProbablyEncrypted(a)),
+    const hasEncryptedAnswer = questions.some((question) =>
+      question.answers?.some((a) => isProbablyEncrypted(a)),
     )
 
     if (
