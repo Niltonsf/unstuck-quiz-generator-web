@@ -10,7 +10,7 @@ import { QuizHeader } from '@/components/quiz/quiz-header'
 import { handleError } from '@/utils/error-handler'
 import ToastProgress from '@/components/ui/toast-progress'
 import QuizQuestion from '@/components/quiz/quiz-question'
-import { QuizService } from '@/services/quiz-service'
+import { QuestionService } from '@/services/question-service'
 
 const QuizPage = () => {
   const router = useRouter()
@@ -62,7 +62,7 @@ const QuizPage = () => {
         return
       }
 
-      const validatedAnswerResult = await QuizService.validateAnswer(
+      const validatedAnswerResult = await QuestionService.validateAnswer(
         currentQuestion,
         myAnswers,
       )

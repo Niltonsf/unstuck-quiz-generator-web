@@ -6,7 +6,10 @@ export interface GenerateQuestionsResponse {
   questions: Question[]
 }
 
-type DecryptQuizResponse = Question[]
+export interface ValidateAnswerResponse {
+  isCorrect: boolean
+  correctAnswers: string[]
+}
 
 export class QuestionService {
   static async generateQuestions(
@@ -25,11 +28,13 @@ export class QuestionService {
     return response.data
   }
 
-  static async decryptQuiz(
-    questions: Question[],
-  ): Promise<DecryptQuizResponse> {
-    const response = await http.post('/questions/decrypt', {
-      data: questions,
+  static async validateAnswer(
+    question: Question,
+    userAnswer: string[],
+  ): Promise<ValidateAnswerResponse> {
+    const response = await http.post('/questions/validate', {
+      question,
+      userAnswer,
     })
 
     return response.data

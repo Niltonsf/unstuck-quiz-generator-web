@@ -7,7 +7,6 @@ import LoadingOverlay from '@/components/layout/loading-overlay'
 import { ReviewHeader } from '@/components/review/review-header'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { handleError } from '@/utils/error-handler'
-import { QuestionService } from '@/services/question-service'
 import { useMutation } from '@tanstack/react-query'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Info } from 'lucide-react'
@@ -32,7 +31,7 @@ const ReviewPage = () => {
   const noQuestions = questions?.length === 0
 
   const decryptQuestionsMutation = useMutation({
-    mutationFn: () => QuestionService.decryptQuiz(questions),
+    mutationFn: () => QuizService.decryptQuiz(questions),
     onSuccess: async (data) => {
       await delay(1000)
 
