@@ -17,7 +17,7 @@ export class QuizService {
   static async decryptQuiz(
     questions: Question[],
   ): Promise<DecryptQuizResponse> {
-    const response = await http.post('/questions/decrypt', {
+    const response = await http.post('/quiz/decrypt', {
       data: questions,
     })
 
