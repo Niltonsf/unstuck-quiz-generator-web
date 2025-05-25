@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ResultsHeader } from '@/components/results/results-header'
 import { ResultsCongratulationCard } from '@/components/results/results-congratulation-card'
 import { useQuizStore } from '@/store/use-quiz-store'
@@ -11,37 +11,41 @@ import ResultsQuestions from '@/components/results/results-questions'
 const ResultsPage = () => {
   const route = useRouter()
 
-  const { title, answers } = useQuizStore()
+  const { title, questions } = useQuizStore()
 
-  const totalCorrectAnswers = Object.values(answers).reduce((total, answer) => {
-    const correctAnswers = answer.correctAnswers || []
-    const userAnswers = answer.answer || []
-    const isCorrect = answer.isCorrect
+  const totalCorrectAnswers = useMemo(() => {
+    let total = 0
 
-    if (isCorrect) {
-      return total + 1
+    for (const question of questions) {
+      if (question.isCorrect) {
+        total++
+        continue
+      }
+
+      const myAnswers = question.myAnswers || []
+      const correctAnswers = question?.answers || []
+
+      const hasIncorrectSelections = myAnswers?.some(
+        (ans) => !question.answers?.includes(ans),
+      )
+
+      if (hasIncorrectSelections) {
+        continue
+      }
+
+      const correctSelections = myAnswers.filter((ans) =>
+        correctAnswers?.includes(ans),
+      )
+
+      if (correctSelections.length > 0 && !hasIncorrectSelections) {
+        const partialScore = correctSelections.length / correctAnswers?.length
+
+        total += partialScore
+      }
     }
 
-    const hasIncorrectSelections = userAnswers.some(
-      (ans) => !correctAnswers.includes(ans),
-    )
-
-    if (hasIncorrectSelections) {
-      return total
-    }
-
-    const correctSelections = userAnswers.filter((ans) =>
-      correctAnswers.includes(ans),
-    )
-
-    if (correctSelections.length > 0 && !hasIncorrectSelections) {
-      const partialScore = correctSelections.length / correctAnswers.length
-
-      return total + partialScore
-    }
-
-    return total
-  }, 0)
+    return total || 0
+  }, [questions])
 
   const handleGenerateNewQuiz = () => {
     route.push('/')

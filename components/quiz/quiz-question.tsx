@@ -6,27 +6,22 @@ import QuestionOptions from '../ui/question/question-options'
 import { QuizCorrectAnswer } from './quiz-correct-answer'
 import { useQuizStore } from '@/store/use-quiz-store'
 import { Question as QuestionType } from '@/models/question'
-import { Answer } from '@/models/answer'
 import { Separator } from '../ui/separator'
 
 interface QuizQuestionProps {
   currentQuestion: QuestionType
   isWaiting: boolean
-  answered: Answer
 }
 
-const QuizQuestion = ({
-  currentQuestion,
-  isWaiting,
-  answered,
-}: QuizQuestionProps) => {
-  const { currentIndex, selectedAnswers, handleSelectAnswer } = useQuizStore()
+const QuizQuestion = ({ currentQuestion, isWaiting }: QuizQuestionProps) => {
+  const { currentIndex, handleSelectAnswer } = useQuizStore()
 
-  const isMultipleChoice = currentQuestion?.answer?.length > 1
+  const isMultipleChoice = currentQuestion?.answers?.length > 1
   const questionNumber = currentIndex + 1
+  const isAnswered = 'isCorrect' in currentQuestion || isWaiting
 
   return (
-    <div className="flex flex-1 w-full items-center justify-center my-3 flex-col gap-6">
+    <>
       <Question>
         <QuestionHeader
           questionNumber={questionNumber}
@@ -39,15 +34,14 @@ const QuizQuestion = ({
 
         <QuestionOptions
           currentQuestion={currentQuestion}
-          selected={selectedAnswers[currentQuestion?.id] || []}
           onSelect={(value) => handleSelectAnswer(currentQuestion.id, value)}
-          disabled={!!answered || isWaiting}
-          answered={answered}
+          disabled={isAnswered}
         />
       </Question>
 
-      {(isWaiting || !!answered) && answered.isCorrect && <QuizCorrectAnswer />}
-    </div>
+      {(isWaiting || !!currentQuestion?.myAnswers?.length) &&
+        currentQuestion?.isCorrect && <QuizCorrectAnswer />}
+    </>
   )
 }
 

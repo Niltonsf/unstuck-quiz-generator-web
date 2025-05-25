@@ -1,4 +1,3 @@
-import { Answers } from '@/models/answer'
 import { Question } from '@/models/question'
 import { ValidateAnswerResponse } from '@/services/question-service'
 import { create } from 'zustand'
@@ -14,18 +13,16 @@ type QuizState = {
     validatedAnswerResponse?: ValidateAnswerResponse,
   ) => void
   handleSelectAnswer: (questionId: string, answer: string) => void
-  selectedAnswers: Record<string, string[]>
   updateQuestion: (
     questionId: string,
     updatedQuestion: Partial<Question>,
   ) => void
-  answers: Answers
   questions: Question[]
   setQuestions: (questions: Question[]) => void
   next: () => void
   previous: () => void
   resetQuiz: () => void
-  reset: () => void
+  clear: () => void
 }
 
 export const useQuizStore = create<QuizState>()(
@@ -35,7 +32,6 @@ export const useQuizStore = create<QuizState>()(
       currentIndex: 0,
       questions: [],
       answers: {},
-      selectedAnswers: {},
       setTitle: (title) => {
         set({ title })
       },
@@ -43,59 +39,67 @@ export const useQuizStore = create<QuizState>()(
         set({ questions })
       },
       handleSelectAnswer: (questionId: string, answer: string) => {
-        const { selectedAnswers, questions } = get()
+        const { questions } = get()
 
-        const currentSelected = selectedAnswers[questionId] || []
         const question = questions.find((q) => q.id === questionId)
-        const questionAnswerLength = question?.answer?.length || 0
+
+        const questionAnswerLength = question?.answers?.length || 0
         const isMultipleChoice = questionAnswerLength > 1
 
         let updatedAnswersArray: string[]
 
         if (isMultipleChoice) {
-          const alreadySelected = currentSelected.includes(answer)
+          const alreadySelected = question?.myAnswers?.includes(answer)
+          const myAnswers = question?.myAnswers || []
 
-          updatedAnswersArray = alreadySelected
-            ? currentSelected?.filter((a) => a !== answer)
-            : [...currentSelected, answer]
+          if (alreadySelected) {
+            const removedAlreadySelectedAnswer =
+              myAnswers?.filter((a) => a !== answer) || []
+
+            updatedAnswersArray = removedAlreadySelectedAnswer
+          } else {
+            updatedAnswersArray = [...myAnswers, answer]
+          }
         } else {
           updatedAnswersArray = [answer]
         }
 
-        const updatedSelectedOptions = {
-          ...selectedAnswers,
-          [questionId]: updatedAnswersArray,
-        }
+        const updatedQuestions = questions.map((question) => {
+          if (question.id === questionId) {
+            return {
+              ...question,
+              myAnswers: updatedAnswersArray,
+            }
+          }
 
+          return question
+        })
         set({
-          selectedAnswers: updatedSelectedOptions,
-          // answers: updatedAnswers,
+          questions: updatedQuestions,
         })
       },
       answerQuestion: (
         questionId: string,
-        selectedAnswers: string[],
+        currentQuestionAnswers: string[],
         validatedAnswerResponse?: ValidateAnswerResponse,
       ) => {
-        const { answers } = get()
+        const { questions } = get()
 
-        const updatedAnswers = validatedAnswerResponse
-          ? {
-              ...answers,
-              [questionId]: {
-                answer: selectedAnswers,
-                isCorrect: validatedAnswerResponse.isCorrect,
-                correctAnswers: validatedAnswerResponse.correctAnswers,
-              },
+        const updatedQuestions = questions.map((question) => {
+          if (question.id === questionId) {
+            return {
+              ...question,
+              isCorrect: validatedAnswerResponse?.isCorrect,
+              myAnswers: currentQuestionAnswers,
+              answers: validatedAnswerResponse?.decryptedAnswers || [],
             }
-          : answers
+          }
+
+          return question
+        })
 
         set({
-          selectedAnswers: {
-            ...get().selectedAnswers,
-            [questionId]: selectedAnswers,
-          },
-          answers: updatedAnswers,
+          questions: updatedQuestions,
         })
       },
       updateQuestion: (
@@ -129,17 +133,13 @@ export const useQuizStore = create<QuizState>()(
       resetQuiz: () => {
         set({
           currentIndex: 0,
-          answers: {},
-          selectedAnswers: {},
         })
       },
-      reset: () => {
+      clear: () => {
         set({
           title: '',
           currentIndex: 0,
           questions: [],
-          answers: {},
-          selectedAnswers: {},
         })
       },
     }),
@@ -148,8 +148,6 @@ export const useQuizStore = create<QuizState>()(
       partialize: (state) => ({
         title: state.title,
         currentIndex: state.currentIndex,
-        answers: state.answers,
-        selectedAnswers: state.selectedAnswers,
         questions: state.questions,
       }),
     },

@@ -3,31 +3,27 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { Question } from '@/models/question'
-import { Answer } from '@/models/answer'
 
 interface QuestionOptionsProps {
   currentQuestion: Question
   disabled: boolean
-  answered: Answer
   onSelect?: (value: string) => void
-  selected?: string[]
 }
 
 const QuestionOptions = ({
   currentQuestion,
   onSelect,
-  selected,
   disabled,
-  answered,
 }: QuestionOptionsProps) => {
-  const hasAnswered = !!answered
-  const isUserCorrect = answered?.isCorrect
+  const hasAnswered = 'isCorrect' in currentQuestion
+  const isUserCorrect = currentQuestion?.isCorrect
+  const userAnswers = currentQuestion?.myAnswers || []
 
   return (
     <div className="flex flex-col gap-2">
       {currentQuestion?.options?.map((option, index) => {
-        const isOptionCorrect = answered?.correctAnswers.includes(option.value)
-        const isUserSelection = selected?.includes(option.value)
+        const isOptionCorrect = currentQuestion?.answers?.includes(option.value)
+        const isUserSelection = userAnswers?.includes(option.value)
 
         const isCorrectButNotSelected =
           hasAnswered && !isUserSelection && isOptionCorrect && !isUserCorrect

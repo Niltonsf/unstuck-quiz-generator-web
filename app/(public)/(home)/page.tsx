@@ -13,7 +13,7 @@ import { AnimatePresence } from 'framer-motion'
 
 const HomePage = () => {
   const router = useRouter()
-  const { setQuestions, setTitle, reset } = useQuizStore()
+  const { setQuestions, setTitle, clear } = useQuizStore()
 
   const [animationComplete, setAnimationComplete] = useState(false)
 
@@ -32,8 +32,8 @@ const HomePage = () => {
   const shouldRedirect = submitFileMuttation?.isSuccess && animationComplete
 
   useEffect(() => {
-    reset()
-  }, [reset])
+    clear()
+  }, [clear])
 
   useEffect(() => {
     if (shouldRedirect) {

@@ -8,7 +8,7 @@ export interface GenerateQuestionsResponse {
 
 export interface ValidateAnswerResponse {
   isCorrect: boolean
-  correctAnswers: string[]
+  decryptedAnswers: string[]
 }
 
 export class QuestionService {

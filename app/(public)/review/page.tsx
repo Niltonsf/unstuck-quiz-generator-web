@@ -64,8 +64,8 @@ const ReviewPage = () => {
   }
 
   useEffect(() => {
-    const hasEncryptedAnswer = questions.some((q) =>
-      q.answer.some((a) => isProbablyEncrypted(a)),
+    const hasEncryptedAnswer = questions.some((question) =>
+      question.answers.some((answer) => isProbablyEncrypted(answer)),
     )
 
     if (

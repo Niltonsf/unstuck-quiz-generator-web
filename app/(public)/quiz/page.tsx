@@ -19,8 +19,6 @@ const QuizPage = () => {
     questions,
     currentIndex,
     next,
-    answers,
-    selectedAnswers,
     answerQuestion,
     previous,
     resetQuiz,
@@ -32,9 +30,10 @@ const QuizPage = () => {
     () => questions[currentIndex],
     [currentIndex, questions],
   )
-  const myAnswers = selectedAnswers[currentQuestion?.id]
+  const myAnswers = currentQuestion?.myAnswers || []
   const isLastQuestion = currentIndex === questions?.length - 1
-  const answered = answers[currentQuestion?.id]
+  const isQuestionAnswered =
+    !!currentQuestion?.myAnswers?.length && 'isCorrect' in currentQuestion
 
   const onGoBack = () => {
     resetQuiz()
@@ -52,7 +51,7 @@ const QuizPage = () => {
         return
       }
 
-      if (answered) {
+      if (isQuestionAnswered) {
         next()
 
         if (isLastQuestion) {
@@ -90,7 +89,6 @@ const QuizPage = () => {
         }
       }, 3000)
     } catch (error) {
-      console.log('page: ', error)
       handleError(error)
     }
   }
@@ -101,18 +99,25 @@ const QuizPage = () => {
         <QuizHeader title={title} onGoBack={onGoBack} />
 
         <div className="max-w-3xl w-full flex flex-1 flex-col self-center">
-          <QuizQuestion
-            currentQuestion={currentQuestion}
-            isWaiting={isWaiting}
-            answered={answered}
-          />
+          <div className="flex flex-1 w-full items-center justify-center my-3 flex-col gap-6">
+            {!currentQuestion ? (
+              <div className="text-gray-500 text-center text-sm">
+                No current question available. Please wait or try again later.
+              </div>
+            ) : (
+              <QuizQuestion
+                currentQuestion={currentQuestion}
+                isWaiting={isWaiting}
+              />
+            )}
+          </div>
 
           <div className="flex w-full items-center justify-between max-w-3xl">
             <Button
               variant={'outline'}
               className="h-11 rounded-2xl"
               onClick={previous}
-              disabled={currentIndex === 0 || isWaiting}
+              disabled={currentIndex === 0 || isWaiting || !currentQuestion}
             >
               <ChevronLeft />
               Previous
@@ -121,7 +126,7 @@ const QuizPage = () => {
             <Button
               className="h-11 rounded-2xl w-24 self-end"
               onClick={handleNext}
-              disabled={isWaiting}
+              disabled={isWaiting || !currentQuestion}
             >
               {isLastQuestion ? 'Finish' : 'Next'}
 

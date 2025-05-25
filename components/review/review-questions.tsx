@@ -15,7 +15,7 @@ const ReviewQuestions = () => {
     question: QuestionType,
     selectedAnswer: string,
   ) => {
-    const currentAnswers = question.answer ?? []
+    const currentAnswers = question.answers ?? []
 
     const isSelected = currentAnswers.includes(selectedAnswer)
 
@@ -26,7 +26,7 @@ const ReviewQuestions = () => {
       }
 
       updateQuestion(question.id, {
-        answer: currentAnswers.filter((ans) => ans !== selectedAnswer),
+        answers: currentAnswers.filter((ans) => ans !== selectedAnswer),
       })
     } else {
       if (currentAnswers.length >= 3) {
@@ -35,7 +35,7 @@ const ReviewQuestions = () => {
       }
 
       updateQuestion(question.id, {
-        answer: [...currentAnswers, selectedAnswer],
+        answers: [...currentAnswers, selectedAnswer],
       })
     }
   }
@@ -72,7 +72,7 @@ const ReviewQuestions = () => {
 
           <div className="flex flex-col gap-3">
             <span className="text-sm font-medium mb-3">
-              {question.answer.length > 1 ? 'Multichoice' : 'Singlechoise'}{' '}
+              {question.answers.length > 1 ? 'Multichoice' : 'Singlechoise'}{' '}
               Answers
             </span>
 
@@ -81,7 +81,7 @@ const ReviewQuestions = () => {
                 key={`${question.id}-option-${optionIndex}`}
                 optionNumber={optionIndex + 1}
                 answer={option.label}
-                isCorrectAnswer={question?.answer?.includes(option.value)}
+                isCorrectAnswer={question?.answers?.includes(option.value)}
                 onDoubleClick={() =>
                   handleToggleAnswerSelection(question, option.value)
                 }

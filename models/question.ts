@@ -5,7 +5,9 @@ export type Question = {
   question: string
   options: Option[]
   questionNumber: number
-  answer: string[]
+  answers: string[]
+  isCorrect?: boolean
+  myAnswers?: string[]
 }
 
 export type QuestionStatus = 'CORRECT' | 'INCORRECT' | 'PARTIAL'

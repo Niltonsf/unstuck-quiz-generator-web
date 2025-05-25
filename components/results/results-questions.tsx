@@ -10,7 +10,7 @@ import QuestionOptions from '../ui/question/question-options'
 import { getQuestionStatus } from '@/utils/question'
 
 const ResultsQuestions = () => {
-  const { answers, questions } = useQuizStore()
+  const { questions } = useQuizStore()
 
   const [openStates, setOpenStates] = useState(Array(10).fill(false))
 
@@ -24,9 +24,8 @@ const ResultsQuestions = () => {
     <>
       {questions.map((question, index) => {
         const questionNumber = index + 1
-        const isCorrect = answers[question?.id].isCorrect
-        const correctAnswers = answers[question?.id].correctAnswers
-        const userAnswers = answers[question?.id].answer
+        const correctAnswers = question?.answers
+        const userAnswers = question?.myAnswers
         const status = getQuestionStatus(userAnswers, correctAnswers)
 
         return (
@@ -51,15 +50,9 @@ const ResultsQuestions = () => {
                 <Separator className="mb-5" />
 
                 <QuestionOptions
-                  key={'da' + index}
+                  key={'results' + index}
                   currentQuestion={question}
                   disabled={true}
-                  selected={answers[question?.id].answer}
-                  answered={{
-                    isCorrect,
-                    correctAnswers,
-                    answer: userAnswers,
-                  }}
                 />
               </CollapsibleContent>
             </Question>
